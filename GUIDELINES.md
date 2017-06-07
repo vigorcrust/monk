@@ -5,32 +5,39 @@
 - Must be written in Java
 - Must be a command line application
   - args parsing, validating and error handling
-- Maven or similar must be used for package management
+- Maven/Bazel/Gradle must be used for build and dependency management
 - Must be packaged into an executable Jar file (with all imminent dependencies)
 - Connection to database must be done with JDBC
 - Suport for multiple databases must be possible (without recompiling)
 - JDBC jars are stored in a subfolder "lib"
 - Configuration is stored as config.json side-by-side to the jar file
-- Location of the config file can be set by a flag
 - Insert/Update/Delete statements must be prohibited inside the code
 - Logging must be implemented, with RollingFileAppender as default.
-- No exceptions are allowed in logging output
-- Logging should be kept to a minimal and only three levels are allowed (Debug, Info & Fatal)
-- Default LogLevel is Info
+  - No exceptions are allowed in logging output
+  - Logging should be kept to a minimal and only three levels are allowed (Debug, Info & Fatal)
+  - Default LogLevel is Info
 - Must be able to import CSV (ex. csvjdbc)
-- Must be able to export CSV
 - Must be able to publish results to different backends
   - default backend is Influxdb
 - IOC resp. DI must be used
-- UnitTests must be written in TestNG
 - support for SSL & TLS
-- Configuration of custom truststore location must be possible.
+
+### Optional requirements
+
+- Configuration of custom truststore location must be possible
+- Possibility to bundle JRE with the application and to have an executable
+- Must be able to export CSV
+- Location of the config file can be set by a flag
+- Executions can be scheduled
 
 ## Frameworks (recommendations)
 
 - SLF4J + tinylog/Log4J
 - config (https://github.com/typesafehub/config)
 - Guice (https://github.com/google/guice)
+- packr (https://github.com/libgdx/packr/)
+- TestNG
+- Quartz
 
 ## Resulting folder structure
 
