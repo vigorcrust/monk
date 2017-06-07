@@ -34,6 +34,7 @@
 
 ## Resulting folder structure
 
+```
 .
 +-- jre
 |   +-- ...
@@ -55,6 +56,7 @@
 +-- monk-standalone.cmd
 +-- monk-standalone.sh
 +-- README.md
+```
 
 ## Configuration
 
