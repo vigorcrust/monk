@@ -32,6 +32,30 @@
 - config (https://github.com/typesafehub/config)
 - Guice (https://github.com/google/guice)
 
+## Resulting folder structure
+
+.
++-- jre
+|   +-- ...
++-- lib
+|   +-- ojdbc8.jar
+|   +-- mon_interface.jar
+|   +-- mon_influx.jar
++-- log
+|   +-- monk.log
++-- import
+|   +-- example
+|       +-- products.csv
++-- export
+|   +-- example
+|       +-- mon_products.csv
++-- config.json
++-- log4net.properties
++-- monk.jar
++-- monk-standalone.cmd
++-- monk-standalone.sh
++-- README.md
+
 ## Configuration
 
 Example config:
