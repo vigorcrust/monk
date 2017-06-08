@@ -72,7 +72,7 @@ Example config:
 {
     "application": "monk",
     "version": "v1",
-    "author": "Daniel Martens <daniel.martens@t-systems.com",
+    "author": "Daniel M.",
     "configuration": {
         "monitoringbackendprovider": [{
                 "name": "influx01",
