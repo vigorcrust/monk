@@ -1,7 +1,8 @@
 # Development information
 
 Downloaded oracle JDBC to "./local/ojdbc7-12_1_0_1.jar" which has been excluded from repo because of licencing issues.
-ojdbc.jar file has been added in IntelliJ as external library.
+ojdbc.jar file has been added in IntelliJ as additional library.
+http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html
 
 Creating a test database with docker:
 
