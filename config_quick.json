@@ -1,0 +1,16 @@
+{
+  "configuration": {
+    "prefix":"MONK_",
+    "database": {
+      "driver":"oracle.jdbc.OracleDriver",
+      "connection_string":"jdbc:oracle:thin:@localhost:49161:XE",
+      "username": "system",
+      "password": "oracle"
+    },
+    "queries": [
+      { "query": "SELECT COUNT(*) AS MONK_VALUE, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'" },
+      { "query": "SELECT COUNT(*) AS MONK_VALUE, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'" },
+      { "query": "SELECT COUNT(*) AS MONK_VALUE, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'" }
+    ]
+  }
+}

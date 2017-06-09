@@ -1,59 +1,76 @@
 package com.monk;
 
-import javax.xml.transform.Result;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        String databaseURL = "jdbc:oracle:thin:@localhost:49161:XE";
-        String dbUsername = "system";
-        String dbPassword = "oracle";
+        Logger logger = LoggerFactory.getLogger(Main.class);
+        logger.info("monk:namaste");
+
+        File configFile = new File(System.getProperty("user.dir") + "/config_quick.json");
+        Config conf = ConfigFactory.parseFile(configFile);
+
+        String databaseURL = conf.getString("configuration.database.connection_string");
+        String dbUsername = conf.getString("configuration.database.username");
+        String dbPassword = conf.getString("configuration.database.password");
 
         Connection conn = null;
         Statement stmt = null;
         try {
-            Class.forName("oracle.jdbc.OracleDriver");
+            Class.forName(conf.getString("configuration.database.driver"));
             conn = DriverManager.getConnection(databaseURL, dbUsername, dbPassword);
             conn.setReadOnly(true);
             if (conn != null){
-                System.out.println("Connetion to db established");
+                logger.info("Connection to db established");
             }
         } catch (ClassNotFoundException ex) {
-            System.out.println("No driver found");
-            ex.printStackTrace();
+            logger.error("No driver found");
+            logger.error(ex.getMessage());
         } catch (SQLException ex) {
-            System.out.println("Error in connection to db.");
-            System.out.println(ex.getMessage());
+            logger.error("Error in connection to db.");
+            logger.error(ex.getMessage());
         }
 
         try {
             stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS NUM_USERS_IT, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS TS FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'");
+            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS MONK_VALUE, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'");
             ResultSetMetaData rsmd = rs.getMetaData();
             String firstColumnName = rsmd.getColumnName(1);
 
             int colCount = rsmd.getColumnCount();
-            System.out.println("COL_COUNT: " + colCount);
+            logger.info("Number of columns found: " + colCount);
+
+            List<String> columns = new ArrayList<String>();
 
             for (int i = 1; i <= colCount; i++){
-                System.out.println("COL" + i + ": " + rsmd.getColumnName(i));
+                columns.add(rsmd.getColumnName(i));
             }
+
+            logger.info("Names of columns found: " + columns.toString());
 
             int count = 0;
             while (rs.next()){
                 count++;
-                System.out.println(firstColumnName + ": " + rs.getString(firstColumnName));
-                System.out.println("TS: " + rs.getInt("TS"));
+                logger.info(firstColumnName + ": " + rs.getString(firstColumnName));
+                logger.info("MONK_TIMESTAMP: " + rs.getInt("MONK_TIMESTAMP"));
             }
-            System.out.println("ROW_COUNT: " + count);
+            logger.info("ROW_COUNT: " + count);
             rs.close();
         } catch (SQLException ex) {
-            System.out.println("Error in executing the query");
-            System.out.println(ex.getMessage());
+            logger.error("Error in executing the query");
+            logger.error(ex.getMessage());
         } catch (NullPointerException ex){
-            System.out.println("No connection could be established.");
+            logger.error("No connection could be established.");
         } finally {
             try{
                 if(stmt!=null)
@@ -63,9 +80,10 @@ public class Main {
             try{
                 if(conn!=null)
                     conn.close();
-            }catch(SQLException se){
-                se.printStackTrace();
+            }catch(SQLException ex){
+                logger.error(ex.getMessage());
             }//end finally try
         }
+        logger.info("monk:punardarzanAya");
     }
 }

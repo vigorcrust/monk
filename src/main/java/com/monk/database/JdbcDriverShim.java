@@ -1,4 +1,4 @@
-package net.adoris.database;
+package com.monk.database;
 
 import java.sql.*;
 import java.util.Properties;
