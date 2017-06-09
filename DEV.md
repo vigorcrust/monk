@@ -4,9 +4,9 @@ Downloaded oracle JDBC to "./local/ojdbc7-12_1_0_1.jar" which has been excluded 
 ojdbc.jar file has been added in IntelliJ as additional library.
 http://www.oracle.com/technetwork/database/features/jdbc/jdbc-drivers-12c-download-1958347.html
 
-Creating a test database with docker:
+Creating a test database with docker and add the init.sql script:
 
-    docker run -d -p 49160:22 -p 49161:1521 -e ORACLE_ALLOW_REMOTE=true wnameless/oracle-xe-11g
+    docker run -d -p 49160:22 -p 49161:1521 -e ORACLE_ALLOW_REMOTE=true -v $(pwd)/init.sql:/docker-entrypoint-initdb.d/init.sql wnameless/oracle-xe-11g
 
 connection parameters
             
