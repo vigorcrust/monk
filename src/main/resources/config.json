@@ -1,78 +1,103 @@
 {
-  "application": "monk",
-  "version": "v1",
-  "author": "Daniel Martens <daniel.martens@t-systems.com",
-  "configuration": {
-    "monitoringbackendprovider": [{
-      "name": "influx01",
-      "library": "jar:file:./lib/mon_influx.jar!/",
-      "driver_class": "monk.monitoring.provider.influx",
-      "connection": {
-        "connection_string": "http://influxdb:8086/write?db=mydb",
-        "username": "influxdbuser",
-        "password": "influxdbpass"
-      }
-    },
-      {
-        "name": "prometheus01",
-        "library": "jar:file:./lib/mon_prometheus.jar!/",
-        "driver_class": "monk.monitoring.provider.prometheus",
-        "connection": {
-          "connection_string": "http://pushgateway.example.org:9091/metrics/job/some_job",
-          "username": "prometheususer",
-          "password": "prometheuspass"
+  "root": {
+    "application": "monk",
+    "version": "v1",
+    "author": "Daniel Martens <daniel.martens@t-systems.com",
+    "libsPath": "C:\\Users\\ahatzold\\Desktop\\monk\\libs",
+    "configuration": {
+      "monitoringbackendprovider_default": "influx01",
+      "monitoringbackendprovider_fallback": "localfile",
+      "dbbackendprovider_default": "oracle01",
+      "monitoringbackendprovider": [
+        {
+          "name": "influx01",
+          "library": "jar:file:./lib/mon_influx.jar!/",
+          "driver_class": "monk.monitoring.provider.influx",
+          "connection": {
+            "connection_string": "http://influxdb:8086/write?db=mydb",
+            "username": "influxdbuser",
+            "password": "influxdbpass"
+          }
+        },
+        {
+          "name": "prometheus01",
+          "library": "jar:file:./lib/mon_prometheus.jar!/",
+          "driver_class": "monk.monitoring.provider.prometheus",
+          "connection": {
+            "connection_string": "http://pushgateway.example.org:9091/metrics/job/some_job",
+            "username": "prometheususer",
+            "password": "prometheuspass"
+          }
+        },
+        {
+          "name": "localfile",
+          "library": "jar:file:./lib/mon_csv.jar!/",
+          "driver_class": "monk.monitoring.provider.csv",
+          "connection": {
+            "connection_string": "./transaction.log",
+            "username": "",
+            "password": ""
+          }
         }
-      },
-      {
-        "name": "localfile",
-        "library": "jar:file:./lib/mon_csv.jar!/",
-        "driver_class": "monk.monitoring.provider.csv",
-        "connection": {
-          "connection_string": "./transaction.log",
-          "username": "",
-          "password": ""
+      ],
+      "dbbackendprovider": [
+        {
+          "name": "oracle01",
+          "library": "ojdbc7.jar",
+          "driver_class": "oracle.jdbc.OracleDriver",
+          "connection": {
+            "connection_string": "jdbc:oracle:thin:@localhost:11521:XE",
+            "username": "system",
+            "password": "oracle"
+          }
+        },
+        {
+          "name": "csv01",
+          "library": "jar:file:./lib/csvjdbc-1.0-31.jar!/",
+          "driver_class": "org.relique.jdbc.csv.CsvDriver",
+          "connection": {
+            "connection_string": "jdbc:relique:csv:./importfolder/",
+            "username": "",
+            "password": ""
+          }
+        },
+        {
+          "name": "mysql01",
+          "library": "jar:file:./lib/mysql-connector-java-8.0.7-dmr.jar!/",
+          "driver_class": "com.mysql.cj.jdbc.Driver",
+          "connection": {
+            "connection_string": "jdbc:mysql://127.0.0.1:3307/?verifyServerCertificate=false&useSSL=true",
+            "username": "root",
+            "password": "bla"
+          }
         }
-      }
-    ],
-    "monitoringbackendprovider_default": "influx01",
-    "monitoringbackendprovider_fallback": "localfile",
-    "dbbackendprovider": [{
-      "name": "oracle01",
-      "library": "jar:file:./lib/ojdbc8.jar!/",
-      "driver_class": "oracle.jdbc.OracleDriver",
-      "connection": {
-        "connection_string": "dbc:oracle:thin:@host:1521:ORCL",
-        "username": "oracleuser",
-        "password": "oracleuser"
-      }
-    },
-      {
-        "name": "csv01",
-        "library": "jar:file:./lib/csvjdbc.jar!/",
-        "driver_class": "org.relique.jdbc.csv.CsvDriver",
-        "connection": {
-          "connection_string": "jdbc:relique:csv:./importfolder/",
-          "username": "",
-          "password": ""
+      ],
+      "queries": [
+        {
+          "name": "FirstQuery",
+          "measurement": "user_list",
+          "statement": "SELECT COUNT(*) AS MONK_VALUE, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'",
+          "timestamp": "17072017",
+          "extra": "",
+          "database_backend": "oracle01"
+        },
+        {
+          "name": "SecondQuery",
+          "measurement": "category_list",
+          "statement": "SELECT FNAME AS Vorname FROM SYSTEM.MON_USERS",
+          "timestamp": "19850412T232050",
+          "extra": "host=server01",
+          "database_backend": "oracle01"
+        },
+        {
+          "name": "ThirdQuery",
+          "measurement": "user_list",
+          "statement": "SELECT COUNT(*) FROM monk.Names",
+          "timestamp": "25012000",
+          "extra": "",
+          "database_backend": "mysql01"
         }
-      }
-    ],
-    "dbbackendprovider_default": "oracle01",
-    "queries": [{
-      "name": "FirstQuery",
-      "measurement": "category_list",
-      "statement": "SELECT COUNT(*) AS DBMON_VALUE, CURRENT_TIMESTAMP AS DBMON_TIMESTAMP, LOCATION AS DBMON_TAG_REGION FROM table WHERE category LIKE '%abc%'",
-      "timestamp": "query|empty|now|19850412T232050",
-      "extra": "host=server01"
-    },
-      {
-        "name": "SecondQuery",
-        "measurement": "user_list",
-        "monitoring_backend": "prometheus01",
-        "database_backend": "csv01",
-        "statement": "SELECT COUNT(*) AS DBMON_VALUE FROM table WHERE user_name LIKE '%abc%'",
-        "timestamp": "",
-        "extra": ""
-      }]
+      ]
+    }
   }
 }
