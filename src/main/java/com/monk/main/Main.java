@@ -27,12 +27,12 @@ public class Main {
 	public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 
 		final Logger logger = LoggerFactory.getLogger(Main.class);
-		logger.info("MONK TOOL v0.1");
+		logger.info("Welcome to MONK TOOL v0.1!");
 
 		//Parse the cmd line arguments
 		Options options = new Options();
 
-		Option jsonFile = new Option("j", "json", true, "config.json to configure tool");
+		Option jsonFile = new Option("j", "json", true, "Path to config.json to configure tool");
 		jsonFile.setRequired(true);
 		options.addOption(jsonFile);
 
@@ -43,8 +43,10 @@ public class Main {
 		try {
 			cmd = cmdLineParser.parse(options, args);
 		} catch (ParseException e) {
-			System.out.println(e.getMessage());
-			formatter.printHelp("MONK TOOl", options);
+			logger.info("Wrong usage of cmd line parameters. Exiting program.");
+			logger.info(e.getMessage());
+			formatter.printHelp("java -jar monk_project-1.x.jar", options);
+			StringBuffer buff = new StringBuffer();
 			System.exit(1);
 			return;
 		}
@@ -52,7 +54,7 @@ public class Main {
 		String jsonPath = cmd.getOptionValue("json");
 		File f = new File(jsonPath);
 		if (!(f.isFile() && !f.isDirectory())) {
-			logger.error("Provided file not found. Please make sure the path is correct.");
+			logger.error("Provided file '" + jsonPath + "' not found. Please make sure the path is correct.");
 			logger.error("App terminated with errors.");
 			return;
 		}
