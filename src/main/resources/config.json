@@ -87,7 +87,7 @@
           "statement": "SELECT FNAME AS Vorname FROM SYSTEM.MON_USERS",
           "timestamp": "19850412T232050",
           "extra": "host=server01",
-          "database_backend": "oracle01"
+          "database_backend": ""
         },
         {
           "name": "ThirdQuery",

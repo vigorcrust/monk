@@ -34,14 +34,14 @@ public class QueryExecutor {
 			String dbUsername = provider.getConnection().getUsername();
 			String dbPassword = provider.getConnection().getPassword();
 
-			logger.debug("Trying to connect...");
+			logger.debug("Connecting to '" + databaseURL + "'");
 			conn = DriverManager.getConnection(databaseURL,
 					dbUsername,
 					dbPassword);
 			conn.setReadOnly(true);
-			if (conn != null) {
+			/*if (conn != null) {
 				logger.debug("Successfully connected!");
-			}
+			}*/
 
 			ResultSet rs = null;
 			ResultSetMetaData rsmd = null;
@@ -85,13 +85,21 @@ public class QueryExecutor {
 	public void executeQueries() throws SQLException {
 		ArrayList<Provider> mbp = config.getDbBackendProvider();
 		for (Query thisQuery : queries) {
-			if (thisQuery.getDatabaseBackend() != null) {
+			logger.info("Executing query '" + thisQuery.getName() + "'");
+			logger.info("|-> " + thisQuery.getStatement());
+			if (!Utils.isEmpty(thisQuery.getDatabaseBackend())) {
 				for (Provider provider : mbp) {
 					if (provider.getName().equals(thisQuery.getDatabaseBackend())) {
-						logger.info("Executing query '" + thisQuery.getName() + "'");
 						executeQuery(thisQuery, provider);
-					} else {
-						logger.trace("No query given for this DatabaseBackend.");
+					}
+				}
+			} else {
+				logger.info("No DatabaseBackend given. " +
+						"Using default DatabaseBackend '" +
+						config.getDbBackendProvider_default() + "'");
+				for (Provider provider : mbp) {
+					if (provider.getName().equals(config.getDbBackendProvider_default())) {
+						executeQuery(thisQuery, provider);
 					}
 				}
 			}
