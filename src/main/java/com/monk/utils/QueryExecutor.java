@@ -32,9 +32,13 @@ public class QueryExecutor {
 			String dbPassword = provider.getConnection().getPassword();
 
 			Logger.debug("Connecting to '" + databaseURL + "'");
-			conn = DriverManager.getConnection(databaseURL,
-					dbUsername,
-					dbPassword);
+			if (dbUsername.isEmpty() || dbPassword.isEmpty()) {
+				conn = DriverManager.getConnection(databaseURL);
+			} else {
+				conn = DriverManager.getConnection(databaseURL,
+						dbUsername,
+						dbPassword);
+			}
 			conn.setReadOnly(true);
 
 			ResultSet rs = null;
@@ -60,8 +64,8 @@ public class QueryExecutor {
 				Logger.error("ResultSet couldn't be closed.");
 			}
 		} catch (SQLRecoverableException ex) {
-			Logger.error("Connection could not be established.");
-			System.exit(1);
+			Logger.error("Connection could not be established.", ex.getMessage());
+			//System.exit(1);
 		} finally {
 			try {
 				if (stmt != null) {

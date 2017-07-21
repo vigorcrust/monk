@@ -13,8 +13,6 @@ public class Query {
 	private String timestamp;
 	private String extra;
 
-	@SerializedName("monitoring_backend")
-	private String monitoringBackend;
 	@SerializedName("database_backend")
 	private String databaseBackend;
 
@@ -36,10 +34,6 @@ public class Query {
 
 	public String getExtra() {
 		return extra;
-	}
-
-	public String getMonitoringBackend() {
-		return monitoringBackend;
 	}
 
 	public String getDatabaseBackend() {
