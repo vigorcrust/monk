@@ -96,6 +96,14 @@
           "timestamp": "25012000",
           "extra": "",
           "database_backend": "mysql01"
+        },
+        {
+          "name": "ThirdQuery",
+          "measurement": "user_list",
+          "statement": "DELETE * FROM SYSTEM.MON_USERS WHERE ID=105",
+          "timestamp": "25012000",
+          "extra": "",
+          "database_backend": "oracle01"
         }
       ]
     }

@@ -10,8 +10,12 @@ import com.monk.utils.ClassLoaderHelper;
 import com.monk.utils.JarLoader;
 import com.monk.utils.QueryExecutor;
 import org.apache.commons.cli.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.pmw.tinylog.Configurator;
+import org.pmw.tinylog.Logger;
+import org.pmw.tinylog.labelers.TimestampLabeler;
+import org.pmw.tinylog.policies.SizePolicy;
+import org.pmw.tinylog.writers.ConsoleWriter;
+import org.pmw.tinylog.writers.RollingFileWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,8 +30,15 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 
-		final Logger logger = LoggerFactory.getLogger(Main.class);
-		logger.info("Welcome to MONK TOOL v0.1!");
+		//Configuration of the logger
+		Configurator.defaultConfig()
+				.writer(new RollingFileWriter("log.txt", 10, new TimestampLabeler(), new SizePolicy(10 * 1024)))
+				.addWriter(new ConsoleWriter())
+				.formatPattern("{date:yyyy-MM-dd HH:mm:ss} {level}: {{class}.{method}()|min-size=50}\t{message}")
+				.activate();
+
+		/*final Logger logger = LoggerFactory.getLogger(Main.class);*/
+		Logger.info("Welcome to MONK TOOL v0.1!");
 
 		//Parse the cmd line arguments
 		Options options = new Options();
@@ -43,10 +54,9 @@ public class Main {
 		try {
 			cmd = cmdLineParser.parse(options, args);
 		} catch (ParseException e) {
-			logger.info("Wrong usage of cmd line parameters. Exiting program.");
-			logger.info(e.getMessage());
+			Logger.info("Wrong usage of cmd line parameters. Exiting program.");
+			Logger.info(e.getMessage());
 			formatter.printHelp("java -jar monk_project-1.x.jar", options);
-			StringBuffer buff = new StringBuffer();
 			System.exit(1);
 			return;
 		}
@@ -54,10 +64,11 @@ public class Main {
 		String jsonPath = cmd.getOptionValue("json");
 		File f = new File(jsonPath);
 		if (!(f.isFile() && !f.isDirectory())) {
-			logger.error("Provided file '" + jsonPath + "' not found. Please make sure the path is correct.");
-			logger.error("App terminated with errors.");
+			Logger.error("Provided file '" + jsonPath + "' not found. Please make sure the path is correct.");
+			Logger.error("App terminated with errors.");
 			return;
 		}
+
 
 		//GSON Parser
 		JsonParser parser = new JsonParser();
@@ -65,7 +76,7 @@ public class Main {
 		Gson gson = new Gson();
 		Root root = gson.fromJson(json.get("root"), Root.class);
 		Configuration config = root.getConfiguration();
-		logger.info("Configuration parsed");
+		Logger.info("Configuration parsed");
 
 		//Load the libfolder
 		Path jdbcJarsPath = Paths.get(root.getLibsPath());
@@ -79,7 +90,7 @@ public class Main {
 		QueryExecutor qe = new QueryExecutor(config, queries);
 		qe.executeQueries();
 
-		logger.info("App terminated without errors.");
+		Logger.info("App terminated.");
 	}
 }
 

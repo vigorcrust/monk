@@ -1,8 +1,7 @@
 package com.monk.utils;
 
 import com.monk.main.Main;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.pmw.tinylog.Logger;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -21,7 +20,6 @@ public class ClassLoaderHelper {
 			return pathname.isDirectory();
 		}
 	};
-	static Logger logger = LoggerFactory.getLogger(ClassLoaderHelper.class);
 	private static String JAR_SUFFIX = ".JAR";
 	static final private FileFilter jarsFilter = new FileFilter() {
 		public boolean accept(File pathname) {
@@ -57,7 +55,7 @@ public class ClassLoaderHelper {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error in ClassLoaderHelper: " + e);
+			Logger.error("Error in ClassLoaderHelper");
 		}
 	}
 
@@ -72,7 +70,7 @@ public class ClassLoaderHelper {
 					return;
 				}
 			}
-			logger.trace(jarName + " not exists");
+			Logger.debug(jarName + " not exists");
 		}
 	}
 }
