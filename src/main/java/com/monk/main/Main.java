@@ -32,12 +32,11 @@ public class Main {
 
 		//Configuration of the logger
 		Configurator.defaultConfig()
-				.writer(new RollingFileWriter("log.txt", 10, new TimestampLabeler(), new SizePolicy(10 * 1024)))
+				.writer(new RollingFileWriter("log.txt", 1, new TimestampLabeler(), new SizePolicy(10 * 1024)))
 				.addWriter(new ConsoleWriter())
 				.formatPattern("{date:yyyy-MM-dd HH:mm:ss} {level}: {{class}.{method}()|min-size=50}\t{message}")
 				.activate();
 
-		/*final Logger logger = LoggerFactory.getLogger(Main.class);*/
 		Logger.info("Welcome to MONK TOOL v0.1!");
 
 		//Parse the cmd line arguments

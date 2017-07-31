@@ -11,13 +11,17 @@ public class Utils {
 
 	//taken from stackoverflow
 	public static String getFirstWord(String text) {
-		// Check if there is more than one word.
-		if (text.indexOf(' ') > -1) {
-			// Extract first word.
-			return text.substring(0, text.indexOf(' '));
+		if (Utils.isEmpty(text)) {
+			throw new NullPointerException("Method needs to have a not null String.");
 		} else {
-			// Text is the first word itself.
-			return text;
+			// Check if there is more than one word.
+			if (text.indexOf(' ') > -1) {
+				// Extract first word.
+				return text.substring(0, text.indexOf(' '));
+			} else {
+				// Text is the first word itself.
+				return text;
+			}
 		}
 	}
 
@@ -26,9 +30,9 @@ public class Utils {
 	public static boolean containsProhibited(String query) {
 
 		String[] prohibitedWords = {"INSERT", "UPDATE", "DELETE"};
-		String firstWord = getFirstWord(query);
+		String firstWord = getFirstWord(query).toLowerCase();
 		for (String prohibitedWord : prohibitedWords) {
-			if (prohibitedWord.equals(firstWord)) {
+			if (prohibitedWord.toLowerCase().equals(firstWord)) {
 				return true;
 			}
 		}

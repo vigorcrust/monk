@@ -21,7 +21,7 @@ public class QueryExecutor {
 		this.config = config;
 	}
 
-	private void executeQuery(Query query, Provider provider) throws SQLException {
+	private void executeQuery(Query query, Provider provider) {
 
 		Connection conn = null;
 		Statement stmt = null;
@@ -53,10 +53,16 @@ public class QueryExecutor {
 				Logger.error("Something went wrong while executing the query '" +
 						query.getName() + "'. \r\n Please make sure the statement is correct.");
 			}
-			if (rsmd != null)
-				Logger.info("RESULT: Column Count " + Integer.toString(rsmd.getColumnCount()));
+			if (rsmd != null) {
+				Logger.info("RESULT:");
+				Logger.info("Column Count | " + Integer.toString(rsmd.getColumnCount()));
+				int count = 0;
+				while (rs.next()) {
+					count++;
+				}
+				Logger.info("Row Count - " + count);
+			}
 
-			//TODO Handle result individually
 
 			try {
 				rs.close();
@@ -64,8 +70,11 @@ public class QueryExecutor {
 				Logger.error("ResultSet couldn't be closed.");
 			}
 		} catch (SQLRecoverableException ex) {
-			Logger.error("Connection could not be established.", ex.getMessage());
-			//System.exit(1);
+			Logger.error(ex.getMessage());
+			System.exit(1);
+		} catch (SQLException sqlEx) {
+			Logger.error(sqlEx.getMessage());
+			System.exit(1);
 		} finally {
 			try {
 				if (stmt != null) {

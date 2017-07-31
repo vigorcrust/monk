@@ -56,14 +56,14 @@
           "library": "jar:file:./lib/csvjdbc-1.0-31.jar!/",
           "driver_class": "org.relique.jdbc.csv.CsvDriver",
           "connection": {
-            "connection_string": "jdbc:relique:csv:./importfolder/",
+            "connection_string": "jdbc:relique:csv:C:/Users/ahatzold/Desktop/monk",
             "username": "",
             "password": ""
           }
         },
         {
           "name": "mysql01",
-          "library": "jar:file:./lib/mysql-connector-java-8.0.7-dmr.jar!/",
+          "library": "mysql-connector-java-8.0.7-dmr.jar",
           "driver_class": "com.mysql.cj.jdbc.Driver",
           "connection": {
             "connection_string": "jdbc:mysql://127.0.0.1:3307/?verifyServerCertificate=false&useSSL=true",
@@ -98,12 +98,12 @@
           "database_backend": "mysql01"
         },
         {
-          "name": "ThirdQuery",
+          "name": "FifthQuery",
           "measurement": "user_list",
-          "statement": "DELETE * FROM SYSTEM.MON_USERS WHERE ID=105",
+          "statement": "SELECT firstname from people WHERE age < 30",
           "timestamp": "25012000",
           "extra": "",
-          "database_backend": "oracle01"
+          "database_backend": "csv01"
         }
       ]
     }
