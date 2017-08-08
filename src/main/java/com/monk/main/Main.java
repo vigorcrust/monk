@@ -78,7 +78,13 @@ public class Main {
 		Logger.info("Configuration parsed");
 
 		//Load the libfolder
-		Path jdbcJarsPath = Paths.get(root.getLibsPath());
+		Path jdbcJarsPath = null;
+		try {
+			jdbcJarsPath = Paths.get(root.getLibsPath());
+		} catch (NullPointerException e) {
+			Logger.error("Couldn't find path to libraries. Please specify it in config.json");
+			System.exit(1);
+		}
 		ClassLoader loader = ClassLoaderHelper.buildClassLoader(Arrays.asList(new File(jdbcJarsPath.toString())), false);
 
 		//Load all needed classes

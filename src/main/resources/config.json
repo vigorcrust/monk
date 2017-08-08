@@ -11,7 +11,7 @@
       "monitoringbackendprovider": [
         {
           "name": "influx01",
-          "library": "jar:file:./lib/mon_influx.jar!/",
+          "library": "mon_influx.jar",
           "driver_class": "monk.monitoring.provider.influx",
           "connection": {
             "connection_string": "http://influxdb:8086/write?db=mydb",
@@ -21,7 +21,7 @@
         },
         {
           "name": "prometheus01",
-          "library": "jar:file:./lib/mon_prometheus.jar!/",
+          "library": "mon_prometheus.jar",
           "driver_class": "monk.monitoring.provider.prometheus",
           "connection": {
             "connection_string": "http://pushgateway.example.org:9091/metrics/job/some_job",
@@ -31,7 +31,7 @@
         },
         {
           "name": "localfile",
-          "library": "jar:file:./lib/mon_csv.jar!/",
+          "library": "lib/mon_csv.jar",
           "driver_class": "monk.monitoring.provider.csv",
           "connection": {
             "connection_string": "./transaction.log",
