@@ -14,7 +14,7 @@
           "library": "mon_influx.jar",
           "driver_class": "monk.monitoring.provider.influx",
           "connection": {
-            "connection_string": "http://influxdb:8086/write?db=mydb",
+            "connection_string": "http://influxdb:8086",
             "username": "influxdbuser",
             "password": "influxdbpass"
           }
