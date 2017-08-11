@@ -27,14 +27,14 @@ public interface MonitoringBackend {
 	 * @param timestamp
 	 * @param measurement
 	 * @param extra
-	 * @return true, if pushing was successful
 	 */
-	boolean pushSinglePoint(String measurement, HashMap<String, String> fields, String timestamp, String extra);
+	void pushSinglePoint(String measurement, HashMap<String, String> fields, String timestamp, String extra);
 
 	/**
 	 * This method closes the connection,
 	 * if one has been established before.
 	 */
 	void closeConnection();
+
 
 }

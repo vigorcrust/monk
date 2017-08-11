@@ -7,6 +7,7 @@ import org.pmw.tinylog.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by ahatzold on 17.07.2017 in project monk_project.
@@ -15,16 +16,19 @@ public class QueryExecutor {
 
 	private ArrayList<Query> queries;
 	private Configuration config;
+	private QEDelegate delegate;
 
-	public QueryExecutor(Configuration config, ArrayList<Query> queries) {
+	public QueryExecutor(Configuration config, ArrayList<Query> queries, QEDelegate delegate) {
 		this.queries = queries;
 		this.config = config;
+		this.delegate = delegate;
 	}
 
 	private void executeQuery(Query query, Provider provider) {
 
 		Connection conn = null;
 		Statement stmt = null;
+
 
 		try {
 			String databaseURL = provider.getConnection().getConnectionString();
@@ -50,18 +54,31 @@ public class QueryExecutor {
 					rsmd = rs.getMetaData();
 				}
 			} catch (NullPointerException ex) {
-				Logger.error("Something went wrong while executing the query '" +
+				Logger.error("Something went wrong while executing query '" +
 						query.getName() + "'. \r\n Please make sure the statement is correct.");
 			}
+			int count = 0;
 			if (rsmd != null) {
 				Logger.info("RESULT:");
-				Logger.info("Column Count | " + Integer.toString(rsmd.getColumnCount()));
-				int count = 0;
 				while (rs.next()) {
 					count++;
 				}
 				Logger.info("Row Count - " + count);
 			}
+
+			String value = Integer.toString(count);
+			HashMap<String, String> map = new HashMap<String, String>() {{
+				put("rows", value);
+			}};
+			delegate.pushSinglePoint("rows", map, query.getTimestamp(), query.getExtra());
+
+			/*MonitoringBackend prom = new PrometheusBackend();
+			prom.establishConnection("127.0.0.1:9091", "", "");
+			try {
+				prom.pushSinglePoint("rowss", null, "", "");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}*/
 
 
 			try {
@@ -110,8 +127,8 @@ public class QueryExecutor {
 					}
 				}
 			} else {
-				Logger.info("No DatabaseBackend given. " +
-						"Using default DatabaseBackend '" +
+				Logger.info("No database backend given. " +
+						"Using default database backend '" +
 						config.getDbBackendProvider_default() + "'");
 				for (Provider provider : mbp) {
 					if (provider.getName().equals(config.getDbBackendProvider_default())) {
