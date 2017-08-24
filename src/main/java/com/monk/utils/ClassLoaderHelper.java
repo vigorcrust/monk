@@ -36,7 +36,7 @@ public class ClassLoaderHelper {
 
 	public static ClassLoader buildClassLoader(List<File> directories, boolean includeSubDirectiories) {
 
-		return buildClassLoader(directories, includeSubDirectiories, Main.class.getClass().getClassLoader());
+		return buildClassLoader(directories, includeSubDirectiories, Main.class.getClassLoader());
 
 	}
 
@@ -69,21 +69,5 @@ public class ClassLoaderHelper {
 
 	}
 
-	/*public static void isJarExisting(String jarName) {
-
-		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-		if (classLoader instanceof URLClassLoader) {
-			URLClassLoader classLoader2 = (URLClassLoader) classLoader;
-			URL[] urls = classLoader2.getURLs();
-			for (URL url : urls) {
-				File file = new File(url.getFile());
-				if (file.getPath().endsWith(jarName)) {
-					return;
-				}
-			}
-			Logger.debug(jarName + " not exists");
-		}
-
-	}*/
 }
 

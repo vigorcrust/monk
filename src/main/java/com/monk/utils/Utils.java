@@ -9,7 +9,13 @@ public class Utils {
 		return str == null || str.length() == 0;
 	}
 
-	//taken from stackoverflow
+	/**
+	 * Gets the first word of a string.
+	 * Used to find Statements starting with a prohibited word.
+	 *
+	 * @param text
+	 * @return
+	 */
 	public static String getFirstWord(String text) {
 		if (Utils.isEmpty(text)) {
 			throw new NullPointerException("Method needs to have a not null String.");
@@ -25,8 +31,12 @@ public class Utils {
 		}
 	}
 
-
-	//Prohibited Words are INSERT, UPDATE, DELETE
+	/**
+	 * Checks, if a query contains a prohibited word
+	 * such as INSERT, UPDATE, DELETE
+	 * @param query
+	 * @return
+	 */
 	public static boolean containsProhibited(String query) {
 
 		String[] prohibitedWords = {"INSERT", "UPDATE", "DELETE"};

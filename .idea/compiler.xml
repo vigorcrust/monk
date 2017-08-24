@@ -6,11 +6,17 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="mon_influx" />
+        <module name="mon_prometheus" />
         <module name="monk_project" />
+        <module name="serviceProviderInterface" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
+      <module name="mon_influx" target="1.8" />
+      <module name="mon_prometheus" target="1.8" />
       <module name="monk_project" target="1.8" />
+      <module name="serviceProviderInterface" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

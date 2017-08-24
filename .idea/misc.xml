@@ -42,6 +42,9 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/../serviceProviderInterface/pom.xml" />
+        <option value="$PROJECT_DIR$/../mon_influx/pom.xml" />
+        <option value="$PROJECT_DIR$/../mon_prometheus/pom.xml" />
       </list>
     </option>
   </component>

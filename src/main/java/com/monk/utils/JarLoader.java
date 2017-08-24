@@ -2,6 +2,7 @@ package com.monk.utils;
 
 import com.monk.gson.Configuration;
 import com.monk.gson.Provider;
+import com.monk.gson.ProviderExtended;
 import com.monk.gson.Query;
 import org.pmw.tinylog.Logger;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public class JarLoader {
 
 	/**
-	 * This method loads the defaultBackendProvider first
+	 * This method loads the default backend provider first
 	 * and afterwards all other needed drivers.
 	 *
 	 * @param config
@@ -31,7 +32,7 @@ public class JarLoader {
 		List<String> alreadyLoadedDrivers = new ArrayList<>();
 
 		//first load the defaultDatabaseBackend
-		Provider defaultBackendProvider = JarLoader.createDefaultDbBackend(config);
+		Provider defaultBackendProvider = ProviderExtended.createDefaultDbBackend(config);
 		String classnameDefault = defaultBackendProvider.getDriverClass();
 		Driver driver = (Driver) Class.forName(classnameDefault, true, loader).newInstance();
 		DriverManager.registerDriver(new DriverShim(driver));
@@ -62,37 +63,6 @@ public class JarLoader {
 				Logger.info("Query has no DatabaseBackend. Skipping.");
 			}
 		}
-	}
-
-	/**
-	 * The default backend is given in the form of the name (e.g. "oracle01").
-	 * GSON only instatiates objects if you give all the information about this objects.
-	 * Therefore the default backend must be created manually.
-	 *
-	 * @param config
-	 * @return defaultBackend Provider
-	 */
-	private static Provider createDefaultDbBackend(Configuration config) {
-
-		//this is the given name
-		String name = config.getDbBackendProvider_default();
-		Provider defaultProvider = null;
-		ArrayList<Provider> mbp = config.getDbBackendProvider();
-		//now we are searching in the list of all providers for this name
-		//and if we find it, we create the object and return
-		for (Provider provider : mbp) {
-			if (provider.getName().equals(name)) {
-				defaultProvider = new Provider(provider.getDriverClass(),
-						name,
-						provider.getLibrary(),
-						provider.getConnection());
-				return defaultProvider;
-			}
-		}
-
-		Logger.error("Couldn't find the given default database backend.");
-		System.exit(1);
-		return null;
 	}
 
 }

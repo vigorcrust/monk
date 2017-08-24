@@ -1,8 +1,11 @@
 package com.monk.utils;
 
+import com.monk.MonitoringService;
 import com.monk.gson.Configuration;
 import com.monk.gson.Provider;
+import com.monk.gson.ProviderExtended;
 import com.monk.gson.Query;
+import com.monk.spi.MonitoringBackend;
 import org.pmw.tinylog.Logger;
 
 import java.sql.*;
@@ -16,21 +19,68 @@ public class QueryExecutor {
 
 	private ArrayList<Query> queries;
 	private Configuration config;
-	private QEDelegate delegate;
+	private ClassLoader loader;
 
-	public QueryExecutor(Configuration config, ArrayList<Query> queries, QEDelegate delegate) {
+	public QueryExecutor(Configuration config, ArrayList<Query> queries, ClassLoader loader) {
 		this.queries = queries;
 		this.config = config;
-		this.delegate = delegate;
+		this.loader = loader;
 	}
 
-	private void executeQuery(Query query, Provider provider) {
+	/**
+	 * This method contains the logic to decide,
+	 * which query is executed with which db backend.
+	 * It hands the queries over to the executeSingeQuery() method.
+	 *
+	 * @throws SQLException
+	 */
+	public void executeQueries() throws SQLException {
+		ArrayList<Provider> mbp = config.getDbBackendProvider();
+		for (Query thisQuery : queries) {
+			Logger.info("Executing query '" + thisQuery.getName() + "'");
+			Logger.info("|-> " + thisQuery.getStatement());
+			if (Utils.containsProhibited(thisQuery.getStatement())) {
+				Logger.error("Query '" + thisQuery.getName() + "' contains one of the prohibited operators: INSERT, UPDATE, DELETE. " +
+						"Skipping this query.");
+				continue;
+			}
+			if (!Utils.isEmpty(thisQuery.getDatabaseBackend())) {
+				for (Provider provider : mbp) {
+					if (provider.getName().equals(thisQuery.getDatabaseBackend())) {
+						executeSingleQuery(thisQuery, provider);
+					}
+				}
+			} else {
+				Logger.info("No database backend given. " +
+						"Using default database backend '" +
+						config.getDbBackendProvider_default() + "'");
+				for (Provider provider : mbp) {
+					if (provider.getName().equals(config.getDbBackendProvider_default())) {
+						executeSingleQuery(thisQuery, provider);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * This method executes a single query by
+	 * - establishing the db backend connection
+	 * - executing the specified query and receiving the response
+	 * - establishing the monitoring backend connection
+	 * - sending the received response to the montitoring backend
+	 * - and closing all connections
+	 *
+	 * @param query
+	 * @param provider
+	 */
+	private void executeSingleQuery(Query query, Provider provider) {
 
 		Connection conn = null;
 		Statement stmt = null;
 
-
 		try {
+			//first we have to connect via DriverManager to db backend
 			String databaseURL = provider.getConnection().getConnectionString();
 			String dbUsername = provider.getConnection().getUsername();
 			String dbPassword = provider.getConnection().getPassword();
@@ -45,10 +95,12 @@ public class QueryExecutor {
 			}
 			conn.setReadOnly(true);
 
+			//then we create the statement
 			ResultSet rs = null;
 			ResultSetMetaData rsmd = null;
 			try {
 				stmt = conn.createStatement();
+				//and execute it
 				rs = stmt.executeQuery(query.getStatement());
 				if (rs != null) {
 					rsmd = rs.getMetaData();
@@ -57,6 +109,7 @@ public class QueryExecutor {
 				Logger.error("Something went wrong while executing query '" +
 						query.getName() + "'. \r\n Please make sure the statement is correct.");
 			}
+
 			int count = 0;
 			if (rsmd != null) {
 				Logger.info("RESULT:");
@@ -66,31 +119,39 @@ public class QueryExecutor {
 				Logger.info("Row Count - " + count);
 			}
 
+			//afterwards we put the results in a map to use it later
 			String value = Integer.toString(count);
 			HashMap<String, String> map = new HashMap<String, String>() {{
 				put("rows", value);
 			}};
-			delegate.pushSinglePoint("rows", map, query.getTimestamp(), query.getExtra());
 
-			/*MonitoringBackend prom = new PrometheusBackend();
-			prom.establishConnection("127.0.0.1:9091", "", "");
-			try {
-				prom.pushSinglePoint("rowss", null, "", "");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}*/
+			//Then we create a provider
+			Provider monProv =
+					ProviderExtended.createDefaultOrFallbackMonitoringBackend(config);
+			com.monk.gson.Connection connection = monProv.getConnection();
 
+			//and create an singleton instance of this service
+			MonitoringService service =
+					MonitoringService.getInstance(loader);
+
+			//in order to get the MonitoringBackend
+			MonitoringBackend mb =
+					service.getBackend(monProv.getDriverClass());
+
+			//last we establish the connection, push the point and close the connection
+			mb.establishConnection(connection.getConnectionString(),
+					connection.getUsername(),
+					connection.getPassword());
+			mb.pushSinglePoint("rows", map, query.getTimestamp(), query.getExtra());
+			mb.closeConnection();
 
 			try {
 				rs.close();
 			} catch (NullPointerException e) {
 				Logger.error("ResultSet couldn't be closed.");
 			}
-		} catch (SQLRecoverableException ex) {
+		} catch (SQLException ex) {
 			Logger.error(ex.getMessage());
-			System.exit(1);
-		} catch (SQLException sqlEx) {
-			Logger.error(sqlEx.getMessage());
 			System.exit(1);
 		} finally {
 			try {
@@ -110,33 +171,6 @@ public class QueryExecutor {
 		}
 	}
 
-	public void executeQueries() throws SQLException {
-		ArrayList<Provider> mbp = config.getDbBackendProvider();
-		for (Query thisQuery : queries) {
-			Logger.info("Executing query '" + thisQuery.getName() + "'");
-			Logger.info("|-> " + thisQuery.getStatement());
-			if (Utils.containsProhibited(thisQuery.getStatement())) {
-				Logger.error("Query '" + thisQuery.getName() + "' contains one of the prohibited operators: INSERT, UPDATE, DELETE. " +
-						"Skipping this query.");
-				continue;
-			}
-			if (!Utils.isEmpty(thisQuery.getDatabaseBackend())) {
-				for (Provider provider : mbp) {
-					if (provider.getName().equals(thisQuery.getDatabaseBackend())) {
-						executeQuery(thisQuery, provider);
-					}
-				}
-			} else {
-				Logger.info("No database backend given. " +
-						"Using default database backend '" +
-						config.getDbBackendProvider_default() + "'");
-				for (Provider provider : mbp) {
-					if (provider.getName().equals(config.getDbBackendProvider_default())) {
-						executeQuery(thisQuery, provider);
-					}
-				}
-			}
-		}
-	}
+
 
 }

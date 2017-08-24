@@ -6,9 +6,6 @@ import com.google.gson.JsonParser;
 import com.monk.gson.Configuration;
 import com.monk.gson.Query;
 import com.monk.gson.Root;
-import com.monk.monitoring.InfluxBackend;
-import com.monk.monitoring.MonitoringBackend;
-import com.monk.monitoring.PrometheusBackend;
 import com.monk.utils.ClassLoaderHelper;
 import com.monk.utils.JarLoader;
 import com.monk.utils.QueryExecutor;
@@ -71,7 +68,6 @@ public class Main {
 			return;
 		}
 
-
 		//GSON Parser
 		JsonParser parser = new JsonParser();
 		JsonObject json = parser.parse(new FileReader(jsonPath)).getAsJsonObject();
@@ -93,24 +89,13 @@ public class Main {
 		//Load all needed classes
 		JarLoader.loadAllJars(config, loader);
 
-		//This will be replaced by Guice so that it is changeable
-		MonitoringBackend influxDB = new InfluxBackend();
-		influxDB.establishConnection("http://127.0.0.1:8086/", "root", "root");
-		//Execute all queries
+		//Get the list of queries and execute them
 		ArrayList<Query> queries = config.getQueries();
-		QueryExecutor qe = new QueryExecutor(config, queries, influxDB::pushSinglePoint);
+		QueryExecutor qe = new QueryExecutor(config, queries, loader);
 		qe.executeQueries();
-		influxDB.closeConnection();
-
-		MonitoringBackend prometheus = new PrometheusBackend();
-		prometheus.establishConnection("127.0.0.1:9091", "", "");
-		ArrayList<Query> queries2 = config.getQueries();
-		QueryExecutor qe2 = new QueryExecutor(config, queries2, prometheus::pushSinglePoint);
-		qe2.executeQueries();
-
-
 
 		Logger.info("App terminated.");
+
 	}
 }
 
