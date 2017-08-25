@@ -1,0 +1,89 @@
+{
+  "root": {
+    "application": "monk",
+    "version": "v1",
+    "author": "Daniel Martens <daniel.martens@t-systems.com",
+    "libsPath": "C:\\Users\\ahatzold\\Desktop\\monk\\libs",
+    "configuration": {
+      "monitoringbackendprovider_default": "influx01",
+      "monitoringbackendprovider_fallback": "localfile",
+      "dbbackendprovider_default": "oracle01",
+      "monitoringbackendprovider": [
+        {
+          "name": "influx01",
+          "driver_class": "com.monk.Influx",
+          "connection": {
+            "connection_string": "http://127.0.0.1:8086/",
+            "username": "root",
+            "password": "root"
+          }
+        },
+        {
+          "name": "prometheus01",
+          "driver_class": "com.monk.Prometheus",
+          "connection": {
+            "connection_string": "127.0.0.1:9091/",
+            "username": "",
+            "password": ""
+          }
+        },
+        {
+          "name": "localfile",
+          "driver_class": "monk.monitoring.provider.csv",
+          "connection": {
+            "connection_string": "./transaction.log",
+            "username": "",
+            "password": ""
+          }
+        }
+      ],
+      "dbbackendprovider": [
+        {
+          "name": "oracle01",
+          "driver_class": "oracle.jdbc.OracleDriver",
+          "connection": {
+            "connection_string": "jdbc:oracle:thin:@localhost:11521:XE",
+            "username": "system",
+            "password": "oracle"
+          }
+        },
+        {
+          "name": "csv01",
+          "driver_class": "org.relique.jdbc.csv.CsvDriver",
+          "connection": {
+            "connection_string": "jdbc:relique:csv:C:/Users/ahatzold/Desktop/monk",
+            "username": "",
+            "password": ""
+          }
+        },
+        {
+          "name": "mysql01",
+          "driver_class": "com.mysql.cj.jdbc.Driver",
+          "connection": {
+            "connection_string": "jdbc:mysql://127.0.0.1:3307/?verifyServerCertificate=false&useSSL=true",
+            "username": "root",
+            "password": "bla"
+          }
+        }
+      ],
+      "queries": [
+        {
+          "name": "FirstQuery",
+          "measurement": "user_list",
+          "statement": "SELECT COUNT(*) AS MONK_VALUE, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'",
+          "timestamp": "1502285680781",
+          "extra": "db=monk3",
+          "database_backend": ""
+        },
+        {
+          "name": "ThirdQuery",
+          "measurement": "user_list",
+          "statement": "SELECT COUNT(*) FROM monk.Names",
+          "timestamp": "",
+          "extra": "db=monk3",
+          "database_backend": "mysql01"
+        }
+      ]
+    }
+  }
+}
