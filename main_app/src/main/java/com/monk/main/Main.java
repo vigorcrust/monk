@@ -84,7 +84,9 @@ public class Main {
 			Logger.error("Couldn't find path to libraries. Please specify it in config.json");
 			System.exit(1);
 		}
-		ClassLoader loader = ClassLoaderHelper.buildClassLoader(Arrays.asList(new File(jdbcJarsPath.toString())), false);
+		ClassLoader loader =
+				ClassLoaderHelper.buildClassLoader(Arrays.asList(new File(jdbcJarsPath.toString())),
+						true);
 
 		//Load all needed classes
 		JarLoader.loadAllJars(config, loader);

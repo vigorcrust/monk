@@ -139,11 +139,16 @@ public class QueryExecutor {
 					service.getBackend(monProv.getDriverClass());
 
 			//last we establish the connection, push the point and close the connection
-			mb.establishConnection(connection.getConnectionString(),
-					connection.getUsername(),
-					connection.getPassword());
-			mb.pushSinglePoint("rows", map, query.getTimestamp(), query.getExtra());
-			mb.closeConnection();
+			if (mb == null) {
+				Logger.error("Implementation of MonitoringBackend could not be found. Check if config.json is set correctly.");
+				System.exit(1);
+			} else {
+				mb.establishConnection(connection.getConnectionString(),
+						connection.getUsername(),
+						connection.getPassword());
+				mb.pushSinglePoint("rows", map, query.getTimestamp(), query.getExtra());
+				mb.closeConnection();
+			}
 
 			try {
 				rs.close();

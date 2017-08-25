@@ -43,7 +43,7 @@ public class Influx implements MonitoringBackend {
 		String fieldsForReport = "";
 		for (Map.Entry<String, String> entry : fields.entrySet()) {
 			pointBuilder.addField(entry.getKey(), entry.getValue());
-			fieldsForReport += entry.getKey() + ": " + entry.getValue();
+			fieldsForReport += entry.getKey() + "=" + entry.getValue();
 		}
 
 		//last build the point
@@ -72,9 +72,9 @@ public class Influx implements MonitoringBackend {
 		}
 
 		//write the point to the database
-		Logger.info("Pushing following point: \r\n" +
-				"measurement: " + measurement + " \r\n" +
-				"fields: " + fieldsForReport + " \r\n" +
+		Logger.info("Pushing following point: " +
+				"measurement: " + measurement + " ," +
+				"fields: " + fieldsForReport + " ," +
 				"timestamp: " + tmstp);
 		influxDB.write(point);
 
