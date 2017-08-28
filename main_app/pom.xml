@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.monk</groupId>
-    <artifactId>main_app</artifactId>
+    <artifactId>monk_tool</artifactId>
     <version>1.0</version>
 
     <packaging>jar</packaging>
@@ -109,9 +109,6 @@
             <artifactId>mon_service_interface</artifactId>
             <version>1.0</version>
         </dependency>
-
-        <!-- To be removed -->
-        <!-- https://mvnrepository.com/artifact/org.influxdb/influxdb-java -->
         <dependency>
             <groupId>org.influxdb</groupId>
             <artifactId>influxdb-java</artifactId>
