@@ -3,9 +3,9 @@
     "application": "monk",
     "version": "v1",
     "author": "Daniel Martens <daniel.martens@t-systems.com",
-    "libsPath": "C:\\Users\\ahatzold\\Desktop\\monk\\libs",
+    "libsPath": "C:\\Users\\ahatzold\\GitProjects\\monk_project\\dist_sample\\libs",
     "configuration": {
-      "monitoringbackendprovider_default": "influx01",
+      "monitoringbackendprovider_default": "prometheus01",
       "monitoringbackendprovider_fallback": "localfile",
       "dbbackendprovider_default": "oracle01",
       "monitoringbackendprovider": [
