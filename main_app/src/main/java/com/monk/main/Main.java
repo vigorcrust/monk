@@ -12,14 +12,11 @@ import com.monk.utils.QueryExecutor;
 import org.apache.commons.cli.*;
 import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
-import org.pmw.tinylog.labelers.TimestampLabeler;
-import org.pmw.tinylog.policies.SizePolicy;
-import org.pmw.tinylog.writers.ConsoleWriter;
-import org.pmw.tinylog.writers.RollingFileWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -30,14 +27,21 @@ public class Main {
 
 	public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
 
-		//Configuration of the logger
-		Configurator.defaultConfig()
-				.writer(new RollingFileWriter("log.txt", 1, new TimestampLabeler(), new SizePolicy(10 * 1024)))
-				.addWriter(new ConsoleWriter())
-				.formatPattern("{date:yyyy-MM-dd HH:mm:ss} {level}: {{class}.{method}()|min-size=50}\t{message}")
-				.activate();
-
 		Logger.info("Welcome to MONK TOOL v0.1!");
+
+		//First we look, if a logging prop is next to the jar
+		//if so, we use it, otherwise we use the one inside the jar
+		String pathToPropFile = System.getProperty("user.dir") + "\\tinylog.properties";
+		File propFile = new File(pathToPropFile);
+		try {
+			Configurator.fromFile(propFile).activate();
+			Logger.info("Using given tinylog.properties file: " + pathToPropFile);
+		} catch (IOException e) {
+			Logger.info("Couldn't find tinylog.properties file side by side with jar. " +
+					"Using default properties.");
+			Configurator.currentConfig().activate();
+		}
+
 
 		//Parse the cmd line arguments
 		Options options = new Options();
