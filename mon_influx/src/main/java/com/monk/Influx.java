@@ -73,8 +73,8 @@ public class Influx implements MonitoringBackend {
 
 		//write the point to the database
 		Logger.info("Pushing following point: " +
-				"measurement: " + measurement + " ," +
-				"fields: " + fieldsForReport + " ," +
+				"measurement: " + measurement + ", " +
+				"fields: " + fieldsForReport + ", " +
 				"timestamp: " + tmstp);
 		influxDB.write(point);
 

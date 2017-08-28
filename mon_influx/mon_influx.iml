@@ -11,6 +11,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="mon_service_interface" />
     <orderEntry type="library" name="Maven: org.tinylog:tinylog:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.influxdb:influxdb-java:2.7" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.retrofit2:retrofit:2.3.0" level="project" />
@@ -19,6 +20,5 @@
     <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:3.8.1" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.13.0" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okhttp3:logging-interceptor:3.8.1" level="project" />
-    <orderEntry type="module" module-name="mon_service_interface" />
   </component>
 </module>

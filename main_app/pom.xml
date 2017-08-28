@@ -98,21 +98,10 @@
             <version>6.11</version>
             <scope>test</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>2.2.1</version>
-        </dependency>
         <dependency>
             <groupId>com.monk</groupId>
             <artifactId>mon_service_interface</artifactId>
             <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.influxdb</groupId>
-            <artifactId>influxdb-java</artifactId>
-            <version>2.7</version>
         </dependency>
     </dependencies>
 
