@@ -2,10 +2,10 @@
   "root": {
     "application": "monk",
     "version": "v1",
-    "author": "Daniel Martens <daniel.martens@t-systems.com",
+    "authors": "Daniel Martens, Alexander Hatzold",
     "libsPath": "C:\\Users\\ahatzold\\GitProjects\\monk_project\\dist_sample\\libs",
     "configuration": {
-      "monitoringbackendprovider_default": "prometheus01",
+      "monitoringbackendprovider_default": "influx01",
       "monitoringbackendprovider_fallback": "localfile",
       "dbbackendprovider_default": "oracle01",
       "monitoringbackendprovider": [
@@ -68,20 +68,12 @@
       ],
       "queries": [
         {
-          "name": "FirstQuery",
-          "measurement": "user_list",
-          "statement": "SELECT COUNT(*) AS MONK_VALUE, ((sysdate - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM SYSTEM.MON_USERS USERS JOIN SYSTEM.MON_DEPARTMENTS DEPT ON USERS.DEPARTMENT = DEPT.ID WHERE DEPT.name LIKE 'IT'",
-          "timestamp": "1502285680781",
-          "extra": "db=monk3",
-          "database_backend": ""
-        },
-        {
-          "name": "ThirdQuery",
-          "measurement": "user_list",
-          "statement": "SELECT COUNT(*) FROM monk.Names",
+          "name": "SecondQuery",
+          "measurement": "rows",
+          "statement": "select lname from system.mon_users",
           "timestamp": "",
-          "extra": "db=monk3",
-          "database_backend": "mysql01"
+          "extra": "db=monk",
+          "database_backend": "oracle01"
         }
       ]
     }
