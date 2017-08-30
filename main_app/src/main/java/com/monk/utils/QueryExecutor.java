@@ -141,7 +141,7 @@ public class QueryExecutor {
 				mb.establishConnection(connection.getConnectionString(),
 						connection.getUsername(),
 						connection.getPassword());
-				mb.pushSinglePoint("rows", map, query.getTimestamp(), query.getExtra());
+				mb.pushSinglePoint(query.getMeasurement(), map, query.getTimestamp(), query.getExtra());
 				mb.closeConnection();
 			} catch (NullPointerException e) {
 				Logger.error("Implementation of MonitoringBackend could not be found. Check if config.json is set correctly.");

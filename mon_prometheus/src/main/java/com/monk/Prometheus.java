@@ -8,6 +8,7 @@ import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ahatzold on 24.08.2017 in project monk_project.
@@ -24,18 +25,36 @@ public class Prometheus implements MonitoringBackend {
 	@Override
 	public void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra) {
 
-		CollectorRegistry registry = new CollectorRegistry();
-		Gauge g = Gauge.build()
-				.name(measurement)
-				.help("description")
-				.register(registry);
+		//If no timestamp is given, use the current time
+		//and convert the string to long in order to use it
+		long tmstp;
+		if (timestamp.isEmpty()) {
+			Logger.info("No timestamp given. Using the current time.");
+			tmstp = System.currentTimeMillis();
+		} else {
+			tmstp = Long.parseLong(timestamp);
+		}
 
-		double count = Math.random() * 10;
-		g.set(count);
+		CollectorRegistry registry = new CollectorRegistry();
+
+		String fieldsForReport = "";
+		for (Map.Entry<String, Double> entry : fields.entrySet()) {
+
+			Gauge g = Gauge.build()
+					.name(measurement)
+					.help("description") //TODO was soll hier geschrieben werden?
+					.register(registry);
+			g.set(entry.getValue());
+
+			fieldsForReport += entry.getKey() + "=" + entry.getValue();
+		}
 
 		try {
-			Logger.info("Pushing point: ");
-			pg.pushAdd(registry, "rows");
+			Logger.info("Pushing following point: " +
+					"measurement: " + measurement + ", " +
+					"fields: " + fieldsForReport + ", " +
+					"timestamp: " + tmstp);
+			pg.pushAdd(registry, "rowsJob");
 		} catch (IOException e) {
 			Logger.error(e.getMessage());
 			System.exit(1);

@@ -61,7 +61,7 @@ public class Influx implements MonitoringBackend {
 				//use it as the current database
 				//other keys should be added
 				if (key.equals("db")) {
-					Logger.info("Using database " + value + " for this query");
+					Logger.info("Using database '" + value + "' for this query");
 					influxDB.setDatabase(value);
 				} else {
 					Logger.info("No database name given. Please specify one in 'extra'.");
