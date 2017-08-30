@@ -28,7 +28,7 @@ public interface MonitoringBackend {
 	 * @param measurement
 	 * @param extra
 	 */
-	void pushSinglePoint(String measurement, HashMap<String, String> fields, String timestamp, String extra);
+	void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra);
 
 	/**
 	 * This method closes the connection,

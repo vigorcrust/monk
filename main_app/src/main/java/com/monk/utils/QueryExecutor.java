@@ -110,7 +110,7 @@ public class QueryExecutor {
 						query.getName() + "'. \r\n Please make sure the statement is correct.");
 			}
 
-			int count = 0;
+			double count = 0;
 			if (rsmd != null) {
 				Logger.info("RESULT:");
 				while (rs.next()) {
@@ -120,34 +120,32 @@ public class QueryExecutor {
 			}
 
 			//afterwards we put the results in a map to use it later
-			String value = Integer.toString(count);
-			HashMap<String, String> map = new HashMap<>();
-			map.put("rows", value);
+			HashMap<String, Double> map = new HashMap<>();
+			map.put("rows", count);
 
 
 			//Then we create a provider
-			Provider monProv =
-					ProviderExtended.createDefaultOrFallbackMonitoringBackend(config);
-			com.monk.gson.Connection connection = monProv.getConnection();
+			Provider monProv = null;
+			com.monk.gson.Connection connection;
+			MonitoringService service;
+			MonitoringBackend mb;
+			try {
+				monProv = ProviderExtended.createDefaultOrFallbackMonitoringBackend(config);
+				connection = monProv.getConnection();
+				//and create an singleton instance of this service
+				service = MonitoringService.getInstance(loader);
+				//in order to get the MonitoringBackend
+				mb = service.getBackend(monProv.getDriverClass());
 
-			//and create an singleton instance of this service
-			MonitoringService service =
-					MonitoringService.getInstance(loader);
-
-			//in order to get the MonitoringBackend
-			MonitoringBackend mb =
-					service.getBackend(monProv.getDriverClass());
-
-			//last we establish the connection, push the point and close the connection
-			if (mb == null) {
-				Logger.error("Implementation of MonitoringBackend could not be found. Check if config.json is set correctly.");
-				System.exit(1);
-			} else {
+				//last we establish the connection, push the point and close the connection
 				mb.establishConnection(connection.getConnectionString(),
 						connection.getUsername(),
 						connection.getPassword());
 				mb.pushSinglePoint("rows", map, query.getTimestamp(), query.getExtra());
 				mb.closeConnection();
+			} catch (NullPointerException e) {
+				Logger.error("Implementation of MonitoringBackend could not be found. Check if config.json is set correctly.");
+				System.exit(1);
 			}
 
 			try {

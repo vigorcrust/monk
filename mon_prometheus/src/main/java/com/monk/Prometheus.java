@@ -4,6 +4,7 @@ import com.monk.spi.MonitoringBackend;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.exporter.PushGateway;
+import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ public class Prometheus implements MonitoringBackend {
 	}
 
 	@Override
-	public void pushSinglePoint(String measurement, HashMap<String, String> fields, String timestamp, String extra) {
+	public void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra) {
 
 		CollectorRegistry registry = new CollectorRegistry();
 		Gauge g = Gauge.build()
@@ -33,9 +34,11 @@ public class Prometheus implements MonitoringBackend {
 		g.set(count);
 
 		try {
+			Logger.info("Pushing point: ");
 			pg.pushAdd(registry, "rows");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.error(e.getMessage());
+			System.exit(1);
 		}
 
 	}

@@ -23,7 +23,7 @@ public class Influx implements MonitoringBackend {
 	}
 
 	@Override
-	public void pushSinglePoint(String measurement, HashMap<String, String> fields, String timestamp, String extra) {
+	public void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra) {
 
 		//If no timestamp is given, use the current time
 		//and convert the string to long in order to use it
@@ -38,10 +38,11 @@ public class Influx implements MonitoringBackend {
 		//create the pointBuilder
 		Point.Builder pointBuilder = Point.measurement(measurement)
 				.time(tmstp, TimeUnit.MILLISECONDS);
+		pointBuilder.addField("rows2", 3L);
 
 		//and add all necessary fields
 		String fieldsForReport = "";
-		for (Map.Entry<String, String> entry : fields.entrySet()) {
+		for (Map.Entry<String, Double> entry : fields.entrySet()) {
 			pointBuilder.addField(entry.getKey(), entry.getValue());
 			fieldsForReport += entry.getKey() + "=" + entry.getValue();
 		}
@@ -49,7 +50,6 @@ public class Influx implements MonitoringBackend {
 		//last build the point
 		Point point = pointBuilder.build();
 
-		//TODO auslagern und vereinfachen
 		//split the extra string
 		if (!extra.isEmpty()) {
 			String[] allExtras = extra.split("\\$");

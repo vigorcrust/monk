@@ -65,7 +65,7 @@ public class ProviderExtended {
 		String nameFallback = config.getMonitoringBackendProvider_fallback();
 		Provider pf = ProviderExtended.findAndCreateProvider(mbp, nameFallback);
 		if (pf != null) {
-			return p;
+			return pf;
 		}
 
 		//if none of the above could be found
