@@ -50,26 +50,7 @@ public class Influx implements MonitoringBackend {
 		//last build the point
 		Point point = pointBuilder.build();
 
-		//split the extra string
-		if (!extra.isEmpty()) {
-			String[] allExtras = extra.split("\\$");
-			for (String info : allExtras) {
-				String[] singleExtra = info.split("=");
-				String key = singleExtra[0];
-				String value = singleExtra[1];
-				//and if you see the key = db
-				//use it as the current database
-				//other keys should be added
-				if (key.equals("db")) {
-					Logger.info("Using database '" + value + "' for this query");
-					influxDB.setDatabase(value);
-				} else {
-					Logger.info("No database name given. Please specify one in 'extra'.");
-				}
-			}
-		} else {
-			Logger.info("'Extra' is empty. This can cause problems when using InfluxDB.");
-		}
+		influxDB.setDatabase(getInfoFromExtra("db", extra));
 
 		//write the point to the database
 		Logger.info("Pushing following point: " +
@@ -83,6 +64,30 @@ public class Influx implements MonitoringBackend {
 	@Override
 	public void closeConnection() {
 		influxDB.close();
+	}
+
+	private String getInfoFromExtra(String tag, String extra) {
+
+		//split the extra string
+		if (!extra.isEmpty()) {
+			String[] allExtras = extra.split("\\$");
+			for (String info : allExtras) {
+				String[] singleExtra = info.split("=");
+				String key = singleExtra[0];
+				String value = singleExtra[1];
+				//and if you see the key = db
+				//use it as the current database
+				if (key.equals(tag)) {
+					Logger.info("Using database '" + value + "' for this query");
+					return value;
+				} else {
+					Logger.info("No database name given. Please specify one in 'extra'.");
+				}
+			}
+		} else {
+			Logger.info("'Extra' is empty. This can cause problems when using InfluxDB.");
+		}
+		return null;
 	}
 
 }

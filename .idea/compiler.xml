@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="main_app" />
         <module name="mon_csv" />
         <module name="mon_influx" />
         <module name="mon_prometheus" />
