@@ -6,7 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="main_app" />
+        <module name="mon_csv" />
         <module name="mon_influx" />
         <module name="mon_prometheus" />
         <module name="mon_service_interface" />
@@ -14,6 +14,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="main_app" target="1.8" />
+      <module name="mon_csv" target="1.8" />
       <module name="mon_influx" target="1.8" />
       <module name="mon_prometheus" target="1.8" />
       <module name="mon_service_interface" target="1.8" />

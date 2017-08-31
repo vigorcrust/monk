@@ -24,3 +24,6 @@ hs_err_pid*
 /*.txt
 /dist_sample/copyfiles.bat
 /dist_sample/copyfiles.bat
+/dist_sample/head.bat
+/dist_sample/*.txt
+/main_app/src/main/resources/config_example.json
