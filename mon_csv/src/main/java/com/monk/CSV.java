@@ -3,9 +3,11 @@ package com.monk;
 import com.monk.spi.MonitoringBackend;
 import org.pmw.tinylog.Logger;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,69 +33,42 @@ public class CSV implements MonitoringBackend {
 			tmstp = Long.parseLong(timestamp);
 		}
 
+		//Extract the information from extra
 		String outputFilePath = getInfoFromExtra("location", extra);
 		if (outputFilePath == null) {
-			Logger.error("Output File couldn't be found.");
+			Logger.error("Output File location is not set correctly in config.json.");
 			System.exit(1);
 		}
 
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(outputFilePath, "UTF-8");
-		} catch (UnsupportedEncodingException | FileNotFoundException e) {
-			Logger.error(e.getMessage());
+		//Then create a new file, if it doesn't exist
+		//and append the head (coloumn names)
+		String headOfCsv = "timestamp, key, value\r\n";
+		File outputFile = new File(outputFilePath);
+		if (!outputFile.exists()) {
+			try {
+				outputFile.createNewFile();
+				Files.write(Paths.get(outputFilePath), headOfCsv.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
 		}
 
-		writer.println("timestamp, name, value");
-
+		//Append every result as a single line
 		String fieldsForReport = "";
 		for (Map.Entry<String, Double> entry : fields.entrySet()) {
 			fieldsForReport += entry.getKey() + "=" + entry.getValue();
-			writer.println(tmstp + ", " + entry.getKey() + ", " + entry.getValue());
+			String line = tmstp + ", " + entry.getKey() + ", " + entry.getValue() + "\r\n";
+			try {
+				Files.write(Paths.get(outputFilePath), line.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
 		}
 
 		Logger.info("Pushing following point: " +
 				"measurement: " + measurement + ", " +
 				"fields: " + fieldsForReport + ", " +
 				"timestamp: " + tmstp);
-
-		writer.close();
-
-
-
-		/*MockResultSet rs = new MockResultSet("myMock");
-		rs.addColumn("rows");
-		//rs.addColumn("value");
-
-		HashMap<String, Object> fields2 = new HashMap<String, Object>(fields);
-
-		try {
-			rs.addRow(fields2);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-
-		try {
-			//write the point to the database
-			Logger.info("Pushing following point: " +
-					"measurement: " + measurement + ", " +
-					"fields: " + fieldsForReport + ", " +
-					"timestamp: " + tmstp);
-
-			File f = new File(location);
-			f.getParentFile().mkdirs();
-			f.createNewFile();
-
-			PrintStream stream = new PrintStream(new FileOutputStream(location, true));
-			CsvDriver.writeToCsv(rs, stream, true);*//*
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
 	}
 
 	@Override
