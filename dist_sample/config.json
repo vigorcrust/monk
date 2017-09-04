@@ -5,8 +5,8 @@
     "authors": "Daniel Martens, Alexander Hatzold",
     "libsPath": "C:\\Users\\ahatzold\\GitProjects\\monk_project\\dist_sample\\libs",
     "configuration": {
-      "monitoringbackendprovider_default": "influx01",
-      "monitoringbackendprovider_fallback": "localfile",
+      "monitoringbackendprovider_default": "",
+      "monitoringbackendprovider_fallback": "csv01",
       "dbbackendprovider_default": "oracle01",
       "monitoringbackendprovider": [
         {
@@ -28,8 +28,8 @@
           }
         },
         {
-          "name": "localfile",
-          "driver_class": "monk.monitoring.provider.csv",
+          "name": "csv01",
+          "driver_class": "com.monk.CSV",
           "connection": {
             "connection_string": "./transaction.log",
             "username": "",
@@ -51,7 +51,7 @@
           "name": "csv01",
           "driver_class": "org.relique.jdbc.csv.CsvDriver",
           "connection": {
-            "connection_string": "jdbc:relique:csv:C:/Users/ahatzold/Desktop/monk",
+            "connection_string": "jdbc:relique:csv:C:/Users/ahatzold/GitProjects/monk_project/dist_sample",
             "username": "",
             "password": ""
           }
@@ -68,12 +68,28 @@
       ],
       "queries": [
         {
+          "name": "FirstQuery",
+          "measurement": "rows",
+          "statement": "SELECT name FROM people",
+          "timestamp": "",
+          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/outputfirst.csv",
+          "database_backend": "csv01"
+        },
+        {
           "name": "SecondQuery",
           "measurement": "rows",
           "statement": "select lname from system.mon_users",
           "timestamp": "",
-          "extra": "db=monk",
+          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/outputsecond.csv",
           "database_backend": "oracle01"
+        },
+        {
+          "name": "ThirdQuery",
+          "measurement": "rows",
+          "statement": "select name from output",
+          "timestamp": "",
+          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/outputthird.csv",
+          "database_backend": "csv01"
         }
       ]
     }
