@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Main {
 
@@ -59,7 +59,7 @@ public class Main {
 		} catch (ParseException e) {
 			Logger.info("Wrong usage of cmd line parameters. Exiting program.");
 			Logger.info(e.getMessage());
-			formatter.printHelp("java -jar monk_project-1.x.jar", options);
+			formatter.printHelp("java -jar monkt_tool-1.x.jar", options);
 			System.exit(1);
 			return;
 		}
@@ -69,7 +69,7 @@ public class Main {
 		if (!(f.isFile() && !f.isDirectory())) {
 			Logger.error("Provided file '" + jsonPath + "' not found. Please make sure the path is correct.");
 			Logger.error("App terminated with errors.");
-			return;
+			System.exit(1);
 		}
 
 		//GSON Parser
@@ -86,6 +86,7 @@ public class Main {
 			jdbcJarsPath = Paths.get(root.getLibsPath());
 		} catch (NullPointerException e) {
 			Logger.error("Couldn't find path to libraries. Please specify it in config.json");
+			Logger.error("App terminated with errors.");
 			System.exit(1);
 		}
 		ClassLoader loader =
@@ -93,10 +94,11 @@ public class Main {
 						true);
 
 		//Load all needed classes
-		JarLoader.loadAllJars(config, loader);
+		JarLoader jarLoader = new JarLoader(config, loader);
+		jarLoader.loadAllJars();
 
 		//Get the list of queries and execute them
-		ArrayList<Query> queries = config.getQueries();
+		List<Query> queries = config.getQueries();
 		QueryExecutor qe = new QueryExecutor(config, queries, loader);
 		qe.executeQueries();
 

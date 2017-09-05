@@ -1,40 +1,53 @@
 package com.monk.gson;
 
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
  * Created by ahatzold on 11.07.2017.
  */
 public class Configuration {
 
-	private String monitoringbackendprovider_default;
-	private String monitoringbackendprovider_fallback;
-	private String dbbackendprovider_default;
-	private ArrayList<Provider> monitoringbackendprovider;
-	private ArrayList<Provider> dbbackendprovider;
-	private ArrayList<Query> queries;
+	@SerializedName("monitoringbackendprovider_default")
+	private String defaultMonitoringBackendProvider;
 
-	public String getMonitoringBackendProvider_default() {
-		return monitoringbackendprovider_default;
+	@SerializedName("monitoringbackendprovider_fallback")
+	private String fallbackMonitoringBackendProvider;
+
+	@SerializedName("dbbackendprovider_default")
+	private String defaultDbBackendProvider;
+
+	@SerializedName("monitoringbackendprovider")
+	private List<Provider> monitoringBackendProvider;
+
+	@SerializedName("dbbackendprovider")
+	private List<Provider> dbBackendProvider;
+
+	@SerializedName("queries")
+	private List<Query> queries;
+
+	public String getDefaultMonitoringBackendProvider() {
+		return defaultMonitoringBackendProvider;
 	}
 
-	public String getMonitoringBackendProvider_fallback() {
-		return monitoringbackendprovider_fallback;
+	public String getFallbackMonitoringBackendProvider() {
+		return fallbackMonitoringBackendProvider;
 	}
 
-	public String getDbBackendProvider_default() {
-		return dbbackendprovider_default;
+	public String getDefaultDbBackendProvider() {
+		return defaultDbBackendProvider;
 	}
 
-	public ArrayList<Provider> getMonitoringBackendProvider() {
-		return monitoringbackendprovider;
+	public List<Provider> getMonitoringBackendProvider() {
+		return monitoringBackendProvider;
 	}
 
-	public ArrayList<Provider> getDbBackendProvider() {
-		return dbbackendprovider;
+	public List<Provider> getDbBackendProvider() {
+		return dbBackendProvider;
 	}
 
-	public ArrayList<Query> getQueries() {
+	public List<Query> getQueries() {
 		return queries;
 	}
 }

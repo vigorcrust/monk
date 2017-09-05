@@ -7,7 +7,7 @@ public class Root {
 
 	private String application;
 	private String version;
-	private String author;
+	private String authors;
 	private String libsPath;
 	private Configuration configuration;
 
@@ -20,8 +20,8 @@ public class Root {
 		return version;
 	}
 
-	public String getAuthor() {
-		return author;
+	public String getAuthors() {
+		return authors;
 	}
 
 	public Configuration getConfiguration() {

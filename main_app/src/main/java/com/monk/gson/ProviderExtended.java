@@ -2,12 +2,16 @@ package com.monk.gson;
 
 import org.pmw.tinylog.Logger;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ahatzold on 24.08.2017 in project monk_project.
  */
 public class ProviderExtended {
+
+	private ProviderExtended() {
+		throw new IllegalStateException("ProviderExtended is a utility class!");
+	}
 
 	/**
 	 * The default backend is given in the form of the name (e.g. "oracle01").
@@ -20,21 +24,21 @@ public class ProviderExtended {
 	public static Provider createDefaultDbBackend(Configuration config) {
 
 		//this is the given name we will be searching for
-		String name = config.getDbBackendProvider_default();
+		String name = config.getDefaultDbBackendProvider();
 
 		//this is the list of all available backend providers
-		ArrayList<Provider> mbp = config.getDbBackendProvider();
+		List<Provider> mbp = config.getDbBackendProvider();
 
-		//now we search for the provider and return it if found
+		//now we search for the provider
 		Provider p = ProviderExtended.findAndCreateProvider(mbp, name);
-		if (p != null) {
-			return p;
+
+		//if we didn't find it, we have to exit the program
+		if (p == null) {
+			Logger.error("Couldn't find the given default database backend.");
+			System.exit(1);
 		}
 
-		//otherwise we have to exit the program
-		Logger.error("Couldn't find the given default database backend.");
-		System.exit(1);
-		return null;
+		return p;
 	}
 
 
@@ -49,10 +53,10 @@ public class ProviderExtended {
 	public static Provider createDefaultOrFallbackMonitoringBackend(Configuration config) {
 
 		//this is the given name we will be searching for
-		String nameDefault = config.getMonitoringBackendProvider_default();
+		String nameDefault = config.getDefaultMonitoringBackendProvider();
 
 		//this is the list of all available monitoring providers
-		ArrayList<Provider> mbp = config.getMonitoringBackendProvider();
+		List<Provider> mbp = config.getMonitoringBackendProvider();
 
 		//now we search for the provider and return it if found
 		Provider p = ProviderExtended.findAndCreateProvider(mbp, nameDefault);
@@ -62,7 +66,7 @@ public class ProviderExtended {
 
 		//if the provider couldn't be found,
 		//the fallback monitoring backend will be used
-		String nameFallback = config.getMonitoringBackendProvider_fallback();
+		String nameFallback = config.getFallbackMonitoringBackendProvider();
 		Provider pf = ProviderExtended.findAndCreateProvider(mbp, nameFallback);
 		if (pf != null) {
 			return pf;
@@ -84,7 +88,7 @@ public class ProviderExtended {
 	 * @param nameToFind
 	 * @return
 	 */
-	private static Provider findAndCreateProvider(ArrayList<Provider> mbp, String nameToFind) {
+	private static Provider findAndCreateProvider(List<Provider> mbp, String nameToFind) {
 
 		Provider p = null;
 

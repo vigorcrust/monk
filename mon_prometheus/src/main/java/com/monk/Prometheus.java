@@ -7,7 +7,6 @@ import io.prometheus.client.exporter.PushGateway;
 import org.pmw.tinylog.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,7 +22,7 @@ public class Prometheus implements MonitoringBackend {
 	}
 
 	@Override
-	public void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra) {
+	public void pushSinglePoint(String measurement, Map<String, Double> fields, String timestamp, String extra) {
 
 		//If no timestamp is given, use the current time
 		//and convert the string to long in order to use it
@@ -37,7 +36,7 @@ public class Prometheus implements MonitoringBackend {
 
 		CollectorRegistry registry = new CollectorRegistry();
 
-		String fieldsForReport = "";
+		StringBuilder fieldsForLog = new StringBuilder();
 		for (Map.Entry<String, Double> entry : fields.entrySet()) {
 
 			Gauge g = Gauge.build()
@@ -46,13 +45,15 @@ public class Prometheus implements MonitoringBackend {
 					.register(registry);
 			g.set(entry.getValue());
 
-			fieldsForReport += entry.getKey() + "=" + entry.getValue();
+			fieldsForLog.append(entry.getKey());
+			fieldsForLog.append("=");
+			fieldsForLog.append(entry.getValue());
 		}
 
 		try {
 			Logger.info("Pushing following point: " +
 					"measurement: " + measurement + ", " +
-					"fields: " + fieldsForReport + ", " +
+					"fields: " + fieldsForLog + ", " +
 					"timestamp: " + tmstp);
 			pg.pushAdd(registry, "rowsJob");
 		} catch (IOException e) {

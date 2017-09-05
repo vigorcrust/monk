@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,7 +20,7 @@ public class CSV implements MonitoringBackend {
 	}
 
 	@Override
-	public void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra) {
+	public void pushSinglePoint(String measurement, Map<String, Double> fields, String timestamp, String extra) {
 
 		//If no timestamp is given, use the current time
 		//and convert the string to long in order to use it
@@ -46,7 +45,11 @@ public class CSV implements MonitoringBackend {
 		File outputFile = new File(outputFilePath);
 		if (!outputFile.exists()) {
 			try {
-				outputFile.createNewFile();
+				boolean successfullyCreated = outputFile.createNewFile();
+				if (!successfullyCreated) {
+					Logger.error("Couldn't create output file. Exiting program.");
+					System.exit(1);
+				}
 				Files.write(Paths.get(outputFilePath), headOfCsv.getBytes(), StandardOpenOption.APPEND);
 			} catch (IOException e) {
 				Logger.error(e.getMessage());
@@ -54,9 +57,11 @@ public class CSV implements MonitoringBackend {
 		}
 
 		//Append every result as a single line
-		String fieldsForReport = "";
+		StringBuilder fieldsForLog = new StringBuilder();
 		for (Map.Entry<String, Double> entry : fields.entrySet()) {
-			fieldsForReport += entry.getKey() + "=" + entry.getValue();
+			fieldsForLog.append(entry.getKey());
+			fieldsForLog.append("=");
+			fieldsForLog.append(entry.getValue());
 			String line = tmstp + ", " + entry.getKey() + ", " + entry.getValue() + "\r\n";
 			try {
 				Files.write(Paths.get(outputFilePath), line.getBytes(), StandardOpenOption.APPEND);
@@ -67,7 +72,7 @@ public class CSV implements MonitoringBackend {
 
 		Logger.info("Pushing following point: " +
 				"measurement: " + measurement + ", " +
-				"fields: " + fieldsForReport + ", " +
+				"fields: " + fieldsForLog + ", " +
 				"timestamp: " + tmstp);
 	}
 

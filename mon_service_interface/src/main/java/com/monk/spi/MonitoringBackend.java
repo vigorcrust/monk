@@ -1,6 +1,6 @@
 package com.monk.spi;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by ahatzold on 26.07.2017 in project monk_project.
@@ -28,7 +28,7 @@ public interface MonitoringBackend {
 	 * @param measurement
 	 * @param extra
 	 */
-	void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra);
+	void pushSinglePoint(String measurement, Map<String, Double> fields, String timestamp, String extra);
 
 	/**
 	 * This method closes the connection,

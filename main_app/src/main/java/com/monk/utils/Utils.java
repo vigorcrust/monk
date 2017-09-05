@@ -5,6 +5,10 @@ package com.monk.utils;
  */
 public class Utils {
 
+	private Utils() {
+		throw new IllegalStateException("Utils is a utility class!");
+	}
+
 	public static boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
 	}
@@ -43,7 +47,7 @@ public class Utils {
 		String[] prohibitedWords = {"INSERT", "UPDATE", "DELETE"};
 		String firstWord = getFirstWord(query).toLowerCase();
 		for (String prohibitedWord : prohibitedWords) {
-			if (prohibitedWord.toLowerCase().equals(firstWord)) {
+			if (prohibitedWord.equalsIgnoreCase(firstWord)) {
 				return true;
 			}
 		}

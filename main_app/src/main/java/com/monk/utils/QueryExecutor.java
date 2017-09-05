@@ -9,105 +9,109 @@ import com.monk.spi.MonitoringBackend;
 import org.pmw.tinylog.Logger;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ahatzold on 17.07.2017 in project monk_project.
  */
 public class QueryExecutor {
 
-	private ArrayList<Query> queries;
+	private List<Query> queries;
 	private Configuration config;
 	private ClassLoader loader;
 
-	public QueryExecutor(Configuration config, ArrayList<Query> queries, ClassLoader loader) {
+	public QueryExecutor(Configuration config, List<Query> queries, ClassLoader loader) {
 		this.queries = queries;
 		this.config = config;
 		this.loader = loader;
 	}
 
-	/**
-	 * This method contains the logic to decide,
-	 * which query is executed with which db backend.
-	 * It hands the queries over to the executeSingeQuery() method.
-	 *
-	 * @throws SQLException
-	 */
-	public void executeQueries() throws SQLException {
-		ArrayList<Provider> mbp = config.getDbBackendProvider();
-		for (Query thisQuery : queries) {
-			Logger.info("Executing query '" + thisQuery.getName() + "'");
-			Logger.info("|-> " + thisQuery.getStatement());
-			if (Utils.containsProhibited(thisQuery.getStatement())) {
-				Logger.error("Query '" + thisQuery.getName() + "' contains one of the prohibited operators: INSERT, UPDATE, DELETE. " +
+	public void executeQueries() {
+		List<Provider> mbp = config.getDbBackendProvider();
+		for (Query query : queries) {
+			if (Utils.containsProhibited(query.getStatement())) {
+				Logger.error("Query '" + query.getName() + "' contains one of the prohibited operators: " +
+						"INSERT, UPDATE, DELETE. " +
 						"Skipping this query.");
 				continue;
 			}
-			if (!Utils.isEmpty(thisQuery.getDatabaseBackend())) {
+
+			Logger.info("Executing query '" + query.getName() + "'");
+			Logger.info("|-> " + query.getStatement());
+
+			if (!Utils.isEmpty(query.getDatabaseBackend())) {
 				for (Provider provider : mbp) {
-					if (provider.getName().equals(thisQuery.getDatabaseBackend())) {
-						executeSingleQuery(thisQuery, provider);
+					if (provider.getName().equals(query.getDatabaseBackend())) {
+						executeSingleQuery(query, provider);
 					}
 				}
 			} else {
 				Logger.info("No database backend given. " +
 						"Using default database backend '" +
-						config.getDbBackendProvider_default() + "'");
+						config.getDefaultDbBackendProvider() + "'");
 				for (Provider provider : mbp) {
-					if (provider.getName().equals(config.getDbBackendProvider_default())) {
-						executeSingleQuery(thisQuery, provider);
+					if (provider.getName().equals(config.getDefaultDbBackendProvider())) {
+						executeSingleQuery(query, provider);
 					}
 				}
 			}
 		}
 	}
 
-	/**
-	 * This method executes a single query by
-	 * - establishing the db backend connection
-	 * - executing the specified query and receiving the response
-	 * - establishing the monitoring backend connection
-	 * - sending the received response to the montitoring backend
-	 * - and closing all connections
-	 *
-	 * @param query
-	 * @param provider
-	 */
 	private void executeSingleQuery(Query query, Provider provider) {
 
-		Connection conn = null;
-		Statement stmt = null;
+		Connection conn = establishConnection(query, provider);
 
+		Double count = getResult(query, conn);
+
+		//afterwards we put the results in a map to use it later
+		Map<String, Double> map = new HashMap<>();
+		map.put("rows", count);
+
+		Provider monProv = ProviderExtended.createDefaultOrFallbackMonitoringBackend(config);
+		com.monk.gson.Connection connection = monProv.getConnection();
+		MonitoringBackend mb = getMonitoringImpl(monProv);
+
+		//last we establish the connection, push the point and close the connection
+		mb.establishConnection(connection.getConnectionString(),
+				connection.getUsername(),
+				connection.getPassword());
+		mb.pushSinglePoint(query.getMeasurement(), map, query.getTimestamp(), query.getExtra());
+		mb.closeConnection();
+
+	}
+
+	private MonitoringBackend getMonitoringImpl(Provider monProv) {
+
+		MonitoringService service;
+		MonitoringBackend mb = null;
 		try {
-			//first we have to connect via DriverManager to db backend
-			String databaseURL = provider.getConnection().getConnectionString();
-			String dbUsername = provider.getConnection().getUsername();
-			String dbPassword = provider.getConnection().getPassword();
+			//and create an singleton instance of this service
+			service = MonitoringService.getInstance(loader);
+			//in order to get the MonitoringBackend
+			mb = service.getBackend(monProv.getDriverClass());
+		} catch (NullPointerException e) {
+			Logger.error("Implementation of MonitoringBackend could not be found. Check if config.json is set correctly.");
+			System.exit(1);
+		}
 
-			Logger.debug("Connecting to '" + databaseURL + "'");
-			if (dbUsername.isEmpty() || dbPassword.isEmpty()) {
-				conn = DriverManager.getConnection(databaseURL);
-			} else {
-				conn = DriverManager.getConnection(databaseURL,
-						dbUsername,
-						dbPassword);
-			}
-			conn.setReadOnly(true);
+		return mb;
+	}
 
-			//then we create the statement
-			ResultSet rs = null;
-			ResultSetMetaData rsmd = null;
-			try {
-				stmt = conn.createStatement();
-				//and execute it
-				rs = stmt.executeQuery(query.getStatement());
-				if (rs != null) {
-					rsmd = rs.getMetaData();
-				}
-			} catch (NullPointerException ex) {
-				Logger.error("Something went wrong while executing query '" +
-						query.getName() + "'. \r\n Please make sure the statement is correct.");
+	private Double getResult(Query query, Connection conn) {
+
+		//then we create the statement
+		ResultSet rs = null;
+		ResultSetMetaData rsmd = null;
+
+		try (Statement stmt = conn.createStatement()) {
+
+			//and execute it
+			rs = stmt.executeQuery(query.getStatement());
+			if (rs != null) {
+				rsmd = rs.getMetaData();
 			}
 
 			double count = 0;
@@ -119,60 +123,58 @@ public class QueryExecutor {
 				Logger.info("Row Count - " + count);
 			}
 
-			//afterwards we put the results in a map to use it later
-			HashMap<String, Double> map = new HashMap<>();
-			map.put("rows", count);
-
-
-			//Then we create a provider
-			Provider monProv = null;
-			com.monk.gson.Connection connection;
-			MonitoringService service;
-			MonitoringBackend mb;
-			try {
-				monProv = ProviderExtended.createDefaultOrFallbackMonitoringBackend(config);
-				connection = monProv.getConnection();
-				//and create an singleton instance of this service
-				service = MonitoringService.getInstance(loader);
-				//in order to get the MonitoringBackend
-				mb = service.getBackend(monProv.getDriverClass());
-
-				//last we establish the connection, push the point and close the connection
-				mb.establishConnection(connection.getConnectionString(),
-						connection.getUsername(),
-						connection.getPassword());
-				mb.pushSinglePoint(query.getMeasurement(), map, query.getTimestamp(), query.getExtra());
-				mb.closeConnection();
-			} catch (NullPointerException e) {
-				Logger.error("Implementation of MonitoringBackend could not be found. Check if config.json is set correctly.");
-				System.exit(1);
-			}
-
-			try {
+			if (rs != null) {
 				rs.close();
-			} catch (NullPointerException e) {
+			} else {
 				Logger.error("ResultSet couldn't be closed.");
 			}
-		} catch (SQLException ex) {
-			Logger.error(ex.getMessage());
+
+			return count;
+
+		} catch (NullPointerException ex) {
+			Logger.error("Something went wrong while executing query '" +
+					query.getName() + "'. \r\n Please make sure the statement is correct.");
+		} catch (SQLException e) {
+			Logger.error(e.getMessage());
 			System.exit(1);
 		} finally {
 			try {
-				if (stmt != null) {
-					conn.close();
-				}
-			} catch (SQLException se) {
-				Logger.error("An error occured while closing the connection.");
-			}
-			try {
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException ex) {
+				conn.close();
+			} catch (SQLException e) {
 				Logger.error("An error occured while closing the connection.");
 			}
 		}
+		return null;
 	}
 
+	private Connection establishConnection(Query query, Provider provider) {
+
+		Connection conn = null;
+
+		try {
+			//first we have to connect via DriverManager to db backend
+			String databaseURL = provider.getConnection().getConnectionString();
+			String dbUsername = provider.getConnection().getUsername();
+			String dbPassword = provider.getConnection().getPassword();
+
+			Logger.info("Connecting to '" + databaseURL + "'");
+			if (dbUsername.isEmpty() || dbPassword.isEmpty()) {
+				conn = DriverManager.getConnection(databaseURL);
+			} else {
+				conn = DriverManager.getConnection(databaseURL,
+						dbUsername,
+						dbPassword);
+			}
+			conn.setReadOnly(true);
+
+			return conn;
+
+		} catch (SQLException ex) {
+			Logger.error(ex.getMessage());
+			System.exit(1);
+		}
+
+		return null;
+	}
 
 }

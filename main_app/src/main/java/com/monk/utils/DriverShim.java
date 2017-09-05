@@ -51,6 +51,8 @@ class DriverShim implements java.sql.Driver {
 			Method method = this.driver.getClass().getMethod("getParentLogger");
 			logger = (Logger) method.invoke(this.driver);
 		} catch (Exception e) {
+			//TODO: tinylogger kann nicht verwendet werden, was jetzt?
+			System.exit(1);
 		}
 		return logger;
 	}

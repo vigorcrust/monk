@@ -6,7 +6,6 @@ import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
 import org.pmw.tinylog.Logger;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -23,7 +22,7 @@ public class Influx implements MonitoringBackend {
 	}
 
 	@Override
-	public void pushSinglePoint(String measurement, HashMap<String, Double> fields, String timestamp, String extra) {
+	public void pushSinglePoint(String measurement, Map<String, Double> fields, String timestamp, String extra) {
 
 		//If no timestamp is given, use the current time
 		//and convert the string to long in order to use it
@@ -41,10 +40,12 @@ public class Influx implements MonitoringBackend {
 		pointBuilder.addField("rows2", 3L);
 
 		//and add all necessary fields
-		String fieldsForReport = "";
+		StringBuilder fieldsForLog = new StringBuilder();
 		for (Map.Entry<String, Double> entry : fields.entrySet()) {
 			pointBuilder.addField(entry.getKey(), entry.getValue());
-			fieldsForReport += entry.getKey() + "=" + entry.getValue();
+			fieldsForLog.append(entry.getKey());
+			fieldsForLog.append("=");
+			fieldsForLog.append(entry.getValue());
 		}
 
 		//last build the point
@@ -55,7 +56,7 @@ public class Influx implements MonitoringBackend {
 		//write the point to the database
 		Logger.info("Pushing following point: " +
 				"measurement: " + measurement + ", " +
-				"fields: " + fieldsForReport + ", " +
+				"fields: " + fieldsForLog + ", " +
 				"timestamp: " + tmstp);
 		influxDB.write(point);
 

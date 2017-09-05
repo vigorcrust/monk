@@ -15,14 +15,14 @@ import java.util.List;
  */
 public class ClassLoaderHelper {
 
-	static final private FileFilter dirsFilter = new FileFilter() {
+	private static final FileFilter dirsFilter = new FileFilter() {
 
 		public boolean accept(File pathname) {
 			return pathname.isDirectory();
 		}
 
 	};
-	private static String JAR_SUFFIX = ".JAR";
+	private static final String JAR_SUFFIX = ".JAR";
 	static final private FileFilter jarsFilter = new FileFilter() {
 
 		public boolean accept(File pathname) {
@@ -31,7 +31,8 @@ public class ClassLoaderHelper {
 
 	};
 
-	public ClassLoaderHelper() {
+	private ClassLoaderHelper() {
+		throw new IllegalStateException("ClassLoaderHelper is a utility class!");
 	}
 
 	public static ClassLoader buildClassLoader(List<File> directories, boolean includeSubDirectiories) {
