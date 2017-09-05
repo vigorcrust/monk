@@ -72,7 +72,7 @@
           "measurement": "rows",
           "statement": "SELECT name FROM people",
           "timestamp": "",
-          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/outputfirst.csv",
+          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
           "database_backend": "csv01"
         },
         {
@@ -80,16 +80,16 @@
           "measurement": "rows",
           "statement": "select lname from system.mon_users",
           "timestamp": "",
-          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/outputsecond.csv",
+          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
           "database_backend": "oracle01"
         },
         {
           "name": "ThirdQuery",
           "measurement": "rows",
-          "statement": "select name from output",
+          "statement": "SELECT COUNT(*) FROM monk.Names",
           "timestamp": "",
-          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/outputthird.csv",
-          "database_backend": "csv01"
+          "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
+          "database_backend": "mysql01"
         }
       ]
     }
