@@ -1,4 +1,4 @@
-package com.monk.utils;
+package com.monk.loader;
 
 import com.monk.main.Main;
 import org.pmw.tinylog.Logger;

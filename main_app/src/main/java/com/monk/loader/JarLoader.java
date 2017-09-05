@@ -1,4 +1,4 @@
-package com.monk.utils;
+package com.monk.loader;
 
 import com.monk.gson.Configuration;
 import com.monk.gson.Provider;

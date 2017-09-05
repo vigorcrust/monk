@@ -1,4 +1,4 @@
-package com.monk.utils;
+package com.monk.executor;
 
 import com.monk.MonitoringService;
 import com.monk.gson.Configuration;
@@ -6,6 +6,7 @@ import com.monk.gson.Provider;
 import com.monk.gson.ProviderExtended;
 import com.monk.gson.Query;
 import com.monk.spi.MonitoringBackend;
+import com.monk.utils.Utils;
 import org.pmw.tinylog.Logger;
 
 import java.sql.*;
@@ -62,7 +63,7 @@ public class QueryExecutor {
 
 	private void executeSingleQuery(Query query, Provider provider) {
 
-		Connection conn = establishConnection(query, provider);
+		Connection conn = getConnection(query, provider);
 
 		Double count = getResult(query, conn);
 
@@ -147,7 +148,7 @@ public class QueryExecutor {
 		return null;
 	}
 
-	private Connection establishConnection(Query query, Provider provider) {
+	private Connection getConnection(Query query, Provider provider) {
 
 		Connection conn = null;
 

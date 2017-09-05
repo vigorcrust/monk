@@ -13,12 +13,19 @@ public class Provider {
 	private String name;
 	private Connection connection;
 
-	//constructor is only used for creation of both
-	// - default backend provider
-	// - default/fallback monitoring provider
-	//needs to be done manually since defaultDatabaseBackend is
-	//just a string and cannot be instantiated by GSON
-	//for more information see class ProviderExtended
+	/**
+	 * constructor is only used for creation of both
+	 * - default backend provider
+	 * - default/fallback monitoring provider
+	 * needs to be done manually since defaultDatabaseBackend is
+	 * just a string and cannot be instantiated by GSON
+	 * for more information see class ProviderExtended
+	 *
+	 * @param driverClass
+	 * @param name
+	 * @param connection
+	 */
+	//
 	public Provider(String driverClass, String name, Connection connection) {
 		this.driverClass = driverClass;
 		this.name = name;

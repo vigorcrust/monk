@@ -3,12 +3,12 @@ package com.monk.main;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.monk.executor.QueryExecutor;
 import com.monk.gson.Configuration;
 import com.monk.gson.Query;
 import com.monk.gson.Root;
-import com.monk.utils.ClassLoaderHelper;
-import com.monk.utils.JarLoader;
-import com.monk.utils.QueryExecutor;
+import com.monk.loader.ClassLoaderHelper;
+import com.monk.loader.JarLoader;
 import org.apache.commons.cli.*;
 import org.pmw.tinylog.Configurator;
 import org.pmw.tinylog.Logger;
@@ -41,7 +41,6 @@ public class Main {
 					"Using default properties.");
 			Configurator.currentConfig().activate();
 		}
-
 
 		//Parse the cmd line arguments
 		Options options = new Options();
