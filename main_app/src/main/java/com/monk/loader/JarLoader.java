@@ -2,8 +2,8 @@ package com.monk.loader;
 
 import com.monk.gson.Configuration;
 import com.monk.gson.Provider;
-import com.monk.gson.ProviderExtended;
 import com.monk.gson.Query;
+import com.monk.utils.ProviderExtended;
 import org.pmw.tinylog.Logger;
 
 import java.sql.Driver;
@@ -13,7 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by ahatzold on 17.07.2017 in project monk_project.
+ * Loads all Jars specified in Configuration to the ClassLoader
+ *
+ * @author damarten on 13.07.2017
+ * @see java.net.URLClassLoader
  */
 public class JarLoader {
 
@@ -21,11 +24,20 @@ public class JarLoader {
 	private Configuration config;
 	private ClassLoader loader;
 
+	/**
+	 * Creates a new JarLoader
+	 *
+	 * @param config The config to use
+	 * @param loader The ClassLoader to add the jars to
+	 */
 	public JarLoader(Configuration config, ClassLoader loader) {
 		this.config = config;
 		this.loader = loader;
 	}
 
+	/**
+	 * Loads all jars - entry point of this class
+	 */
 	public void loadAllJars() {
 
 		//first load the defaultDatabaseBackend
@@ -42,6 +54,9 @@ public class JarLoader {
 
 	}
 
+	/**
+	 * Loads the default database backend
+	 */
 	private void loadDefaultDatabaseBackend() {
 
 		Provider defaultBackendProvider = ProviderExtended.createDefaultDbBackend(this.config);
@@ -50,6 +65,15 @@ public class JarLoader {
 
 	}
 
+	/**
+	 * Adds the necessary drivers to the
+	 * <p>
+	 * This method searches in the list of queries
+	 * for all necessary drivers and adds them to the list
+	 * of drivers to load.
+	 *
+	 * @return The , which will be loaded
+	 */
 	private List<Provider> addDriversToList() {
 
 		List<Provider> driversToLoad = new ArrayList<>();
@@ -74,6 +98,14 @@ public class JarLoader {
 		return driversToLoad;
 	}
 
+	/**
+	 * Registers a driver to the classloader
+	 * <p>
+	 * Takes the classname, creates a new Driver and registers
+	 * it by using the DriverManager.
+	 *
+	 * @param classname The classname of the driver to register
+	 */
 	private void registerDriver(String classname) {
 
 		try {

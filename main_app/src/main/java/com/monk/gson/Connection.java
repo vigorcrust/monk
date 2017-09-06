@@ -1,16 +1,20 @@
 package com.monk.gson;
 
 import com.google.gson.annotations.SerializedName;
-
 /**
- * Created by ahatzold on 11.07.2017 in project monk_project.
+ * Represents a Connection of a Provider of GSON parsed config file
+ *
+ * @author ahatzold on 11.07.2017
  */
 public class Connection {
 
 	@SerializedName("connection_string")
 	private String connectionString;
 
+	@SerializedName("username")
 	private String username;
+
+	@SerializedName("password")
 	private String password;
 
 	public String getConnectionString() {

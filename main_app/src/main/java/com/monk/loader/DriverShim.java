@@ -9,9 +9,11 @@ import java.util.Properties;
 import java.util.logging.Logger;
 
 /**
- * Created by damarten on 13.07.2017.
+ * Simple wrapper for java.sql.Driver
+ *
+ * @author damarten on 13.07.2017
+ * @see java.sql.Driver
  */
-
 class DriverShim implements java.sql.Driver {
 
 	private java.sql.Driver driver;
@@ -51,7 +53,7 @@ class DriverShim implements java.sql.Driver {
 			Method method = this.driver.getClass().getMethod("getParentLogger");
 			logger = (Logger) method.invoke(this.driver);
 		} catch (Exception e) {
-			//TODO: tinylogger kann nicht verwendet werden, was jetzt?
+			org.pmw.tinylog.Logger.error(e.getMessage());
 			System.exit(1);
 		}
 		return logger;

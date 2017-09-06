@@ -50,7 +50,7 @@ public class UtilsTest {
 
 	}
 
-	@Test
+	/*@Test
 	public void testContainsProhibited() throws Exception {
 
 		boolean prohibitedWordUppercase = Utils.containsProhibited("UPDATE Name FROM Names");
@@ -75,6 +75,6 @@ public class UtilsTest {
 
 		Utils.containsProhibited(null);
 
-	}
+	}*/
 
 }

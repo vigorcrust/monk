@@ -1,24 +1,35 @@
 package com.monk.utils;
 
 /**
- * Created by ahatzold on 20.07.2017 in project monk_project.
+ * Utility class
+ *
+ * @author ahatzold on 20.07.2017
  */
 public class Utils {
 
+	/**
+	 * Constructor should not be used
+	 */
 	private Utils() {
 		throw new IllegalStateException("Utils is a utility class!");
 	}
 
+	/**
+	 * Checks if a String is empty
+	 *
+	 * @param str The String to check
+	 * @return true, if the String is empty, otherwise false
+	 */
 	public static boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
 	}
 
 	/**
 	 * Gets the first word of a string.
-	 * Used to find Statements starting with a prohibited word.
+	 * Used to find statements starting with a prohibited word.
 	 *
-	 * @param text
-	 * @return
+	 * @param text The String to search in
+	 * @return The first word of the given text
 	 */
 	public static String getFirstWord(String text) {
 		if (Utils.isEmpty(text)) {
@@ -33,26 +44,6 @@ public class Utils {
 				return text;
 			}
 		}
-	}
-
-	/**
-	 * Checks, if a query contains a prohibited word
-	 * such as INSERT, UPDATE, DELETE
-	 *
-	 * @param query
-	 * @return
-	 */
-	public static boolean containsProhibited(String query) {
-
-		String[] prohibitedWords = {"INSERT", "UPDATE", "DELETE"};
-		String firstWord = getFirstWord(query).toLowerCase();
-		for (String prohibitedWord : prohibitedWords) {
-			if (prohibitedWord.equalsIgnoreCase(firstWord)) {
-				return true;
-			}
-		}
-		return false;
-
 	}
 
 }

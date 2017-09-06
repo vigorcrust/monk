@@ -1,16 +1,28 @@
 package com.monk.gson;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
- * Created by ahatzold on 11.07.2017 in project monk_project.
+ * Represents the Root of GSON parsed config file
+ *
+ * @author ahatzold on 11.07.2017
  */
 public class Root {
 
+	@SerializedName("application")
 	private String application;
-	private String version;
-	private String authors;
-	private String libsPath;
-	private Configuration configuration;
 
+	@SerializedName("version")
+	private String version;
+
+	@SerializedName("authors")
+	private String authors;
+
+	@SerializedName("libspath")
+	private String libsPath;
+
+	@SerializedName("configuration")
+	private Configuration configuration;
 
 	public String getApplication() {
 		return application;

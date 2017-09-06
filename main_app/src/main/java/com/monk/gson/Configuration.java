@@ -5,7 +5,9 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by ahatzold on 11.07.2017.
+ * Represents the Configuration of GSON parsed config file
+ *
+ * @author ahatzold on 11.07.2017
  */
 public class Configuration {
 

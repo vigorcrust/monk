@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.monk.executor.QueryExecutor;
 import com.monk.gson.Configuration;
-import com.monk.gson.Query;
 import com.monk.gson.Root;
 import com.monk.loader.ClassLoaderHelper;
 import com.monk.loader.JarLoader;
@@ -19,13 +18,33 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 
+/**
+ * <h1>Monk Tool</h1>
+ * The monk tool executes given query against a database backend
+ * and publishes the results to a monitoring backend.
+ * <p>
+ * The special thing about it is that both the database and the
+ * monitoring backend can be changed without recompiling.
+ * This means: If you want to use another database you can simply
+ * put the jdbc driver side by side the program, tell the program,
+ * where it is located and the libraries can be used dynamically.
+ * <p>
+ * Same applies to the monitoring backend: If you want to publish
+ * your results to another monitoring backend, you can simply
+ * write a new plugin (according to the defined interface) and
+ * put it next to the other plugins. Then you are able to use
+ * this monitoring backend as well.
+ */
 public class Main {
 
-	public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+	/**
+	 * The main method for the monk tool
+	 *
+	 * @param args Arguments from the command line
+	 */
+	public static void main(String[] args) {
 
 		Logger.info("Welcome to MONK TOOL v0.1!");
 
@@ -44,7 +63,6 @@ public class Main {
 
 		//Parse the cmd line arguments
 		Options options = new Options();
-
 		Option jsonFile = new Option("j", "json", true, "Path to config.json to configure tool");
 		jsonFile.setRequired(true);
 		options.addOption(jsonFile);
@@ -73,7 +91,12 @@ public class Main {
 
 		//GSON Parser
 		JsonParser parser = new JsonParser();
-		JsonObject json = parser.parse(new FileReader(jsonPath)).getAsJsonObject();
+		JsonObject json = null;
+		try {
+			json = parser.parse(new FileReader(jsonPath)).getAsJsonObject();
+		} catch (FileNotFoundException e) {
+			Logger.error(e.getMessage());
+		}
 		Gson gson = new Gson();
 		Root root = gson.fromJson(json.get("root"), Root.class);
 		Configuration config = root.getConfiguration();
@@ -96,9 +119,8 @@ public class Main {
 		JarLoader jarLoader = new JarLoader(config, loader);
 		jarLoader.loadAllJars();
 
-		//Get the list of queries and execute them
-		List<Query> queries = config.getQueries();
-		QueryExecutor qe = new QueryExecutor(config, queries, loader);
+		//Create a QueryExecutor and execute the queries
+		QueryExecutor qe = new QueryExecutor(config, loader);
 		qe.executeQueries();
 
 		Logger.info("App terminated.");
