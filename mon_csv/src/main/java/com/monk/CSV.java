@@ -11,14 +11,23 @@ import java.nio.file.StandardOpenOption;
 import java.util.Map;
 
 /**
- * Created by ahatzold on 31.08.2017 in project monk_project.
+ * Plugin to use CSV output files as MonitoringBackend
+ *
+ * @author ahatzold on 31.08.2017
  */
 public class CSV implements MonitoringBackend {
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void establishConnection(String connectionString, String username, String password) {
 		//not necessary
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void pushSinglePoint(String measurement, Map<String, Double> fields, String timestamp, String extra) {
 
@@ -76,11 +85,23 @@ public class CSV implements MonitoringBackend {
 				"timestamp: " + tmstp);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void closeConnection() {
 		//not necessary
 	}
 
+	/**
+	 * Extracts a certain tag from the String extra
+	 * <p>
+	 * In this implementation the delimiter '$' is used.
+	 *
+	 * @param tag The info to search for
+	 * @param extra The string to search in
+	 * @return The value of the key-value-pair
+	 */
 	private String getInfoFromExtra(String tag, String extra) {
 
 		//TODO Trennzeichen $ dokumentieren

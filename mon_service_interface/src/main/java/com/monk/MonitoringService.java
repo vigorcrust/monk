@@ -7,17 +7,30 @@ import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 /**
- * Created by ahatzold on 22.08.2017 in project serviceProviderInterface.
+ * A singleton interface to return an instance of this MonitoringService
+ * <p>
+ *
+ *
+ * @author ahatzold on 24.08.2017
  */
 public class MonitoringService {
 
 	private static MonitoringService service;
 	private ServiceLoader<MonitoringBackend> loader;
 
+	/**
+	 * Creates a new MonitoringService
+	 * @param classLoader The ClassLoader to use
+	 */
 	private MonitoringService(ClassLoader classLoader) {
 		loader = ServiceLoader.load(MonitoringBackend.class, classLoader);
 	}
 
+	/**
+	 * Gets the singelton instance of the MonitoringService
+	 * @param classLoader The ClassLoader to use
+	 * @return The MonitoringService to use
+	 */
 	public static synchronized MonitoringService getInstance(ClassLoader classLoader) {
 		if (service == null) {
 			service = new MonitoringService(classLoader);
@@ -25,6 +38,11 @@ public class MonitoringService {
 		return service;
 	}
 
+	/**
+	 * Searches the MonitoringBackend with the given driverClass
+	 * @param driverClass The driverClass to search for
+	 * @return The MonitoringBackend
+	 */
 	public MonitoringBackend getBackend(String driverClass) {
 
 		try {

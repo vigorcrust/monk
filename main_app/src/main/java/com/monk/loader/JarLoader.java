@@ -112,7 +112,7 @@ public class JarLoader {
 			Driver driver = (Driver) Class.forName(classname, true, loader).newInstance();
 			DriverManager.registerDriver(new DriverShim(driver));
 			alreadyLoadedDrivers.add(classname);
-			Logger.info("Default database backend driver registered: " + classname);
+			Logger.info("Database backend driver registered: " + classname);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
 			Logger.error(e.getMessage());
 			System.exit(1);

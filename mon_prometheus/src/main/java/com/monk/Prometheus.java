@@ -10,17 +10,27 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by ahatzold on 24.08.2017 in project monk_project.
+ * Plugin to use Prometheus as MonitoringBackend
+ * <p>
+ * Uses Pushgateway as dependency
+ *
+ * @author ahatzold on 24.08.2017
  */
 public class Prometheus implements MonitoringBackend {
 
 	private PushGateway pg;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void establishConnection(String connectionString, String username, String password) {
 		this.pg = new PushGateway(connectionString);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void pushSinglePoint(String measurement, Map<String, Double> fields, String timestamp, String extra) {
 
@@ -34,22 +44,23 @@ public class Prometheus implements MonitoringBackend {
 			tmstp = Long.parseLong(timestamp);
 		}
 
+		//create a registry
 		CollectorRegistry registry = new CollectorRegistry();
 
+		//create for every entry a new Gauge and register it
 		StringBuilder fieldsForLog = new StringBuilder();
 		for (Map.Entry<String, Double> entry : fields.entrySet()) {
-
 			Gauge g = Gauge.build()
 					.name(measurement)
-					.help("description") //TODO was soll hier geschrieben werden?
+					.help("description")
 					.register(registry);
 			g.set(entry.getValue());
-
 			fieldsForLog.append(entry.getKey());
 			fieldsForLog.append("=");
 			fieldsForLog.append(entry.getValue());
 		}
 
+		//last push the point
 		try {
 			Logger.info("Pushing following point: " +
 					"measurement: " + measurement + ", " +
@@ -63,6 +74,9 @@ public class Prometheus implements MonitoringBackend {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void closeConnection() {
 		//doesn't need to be closed

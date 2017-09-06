@@ -10,17 +10,27 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by ahatzold on 22.08.2017 in project mon_influx.
+ * Plugin to use InfluxDB as MonitoringBackend
+ * <p>
+ * Uses dependency influxdb-java to establish connection
+ *
+ * @author ahatzold on 22.08.2017
  */
 public class Influx implements MonitoringBackend {
 
 	private InfluxDB influxDB;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void establishConnection(String connectionString, String username, String password) {
 		this.influxDB = InfluxDBFactory.connect(connectionString, username, password);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void pushSinglePoint(String measurement, Map<String, Double> fields, String timestamp, String extra) {
 
@@ -37,7 +47,6 @@ public class Influx implements MonitoringBackend {
 		//create the pointBuilder
 		Point.Builder pointBuilder = Point.measurement(measurement)
 				.time(tmstp, TimeUnit.MILLISECONDS);
-		pointBuilder.addField("rows2", 3L);
 
 		//and add all necessary fields
 		StringBuilder fieldsForLog = new StringBuilder();
@@ -62,6 +71,9 @@ public class Influx implements MonitoringBackend {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void closeConnection() {
 		influxDB.close();
