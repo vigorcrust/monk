@@ -48,6 +48,9 @@ public class QueryExecutor {
 		String firstWord = Utils.getFirstWord(query).toLowerCase();
 		for (String prohibitedWord : prohibitedWords) {
 			if (prohibitedWord.equalsIgnoreCase(firstWord)) {
+				Logger.error("Query '" + query + "' contains one of the prohibited operators: " +
+						"INSERT, UPDATE, DELETE. " +
+						"Skipping this query.");
 				return true;
 			}
 		}
@@ -66,9 +69,6 @@ public class QueryExecutor {
 		for (Query query : queries) {
 			//check if query contains a prohibited word
 			if (containsProhibited(query.getStatement())) {
-				Logger.error("Query '" + query.getName() + "' contains one of the prohibited operators: " +
-						"INSERT, UPDATE, DELETE. " +
-						"Skipping this query.");
 				continue;
 			}
 
@@ -170,6 +170,8 @@ public class QueryExecutor {
 
 		try (Statement stmt = conn.createStatement()) {
 
+			String replacedQuery = replaceQueryConstantsInQuery(query.getStatement());
+
 			rs = stmt.executeQuery(query.getStatement());
 			if (rs != null) {
 				rsmd = rs.getMetaData();
@@ -214,6 +216,24 @@ public class QueryExecutor {
 			}
 		}
 		return count;
+	}
+
+	private String replaceQueryConstantsInQuery(String statement) {
+
+		System.out.println("Query before: " + statement);
+
+		HashMap<String, String> queryConstants = config.getQueryConstants();
+		for (Map.Entry<String, String> constant : queryConstants.entrySet()) {
+			String key = constant.getKey();
+			String value = constant.getValue();
+			if (statement.contains(key)) {
+				statement = statement.replace(key, value);
+			}
+		}
+
+		System.out.println("Query after: " + statement);
+
+		return statement;
 	}
 
 	/**

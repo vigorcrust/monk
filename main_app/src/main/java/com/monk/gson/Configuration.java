@@ -31,7 +31,7 @@ public class Configuration {
 	private List<Query> queries;
 
 	@SerializedName("queryconstants")
-	private HashMap<String, String> queryconstants;
+	private HashMap<String, String> queryConstants;
 
 	public String getDefaultMonitoringBackendProvider() {
 		return defaultMonitoringBackendProvider;
@@ -57,7 +57,7 @@ public class Configuration {
 		return queries;
 	}
 
-	public HashMap<String, String> getQueryconstants() {
-		return queryconstants;
+	public HashMap<String, String> getQueryConstants() {
+		return queryConstants;
 	}
 }

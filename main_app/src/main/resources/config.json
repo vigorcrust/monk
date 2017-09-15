@@ -7,7 +7,8 @@
     "configuration": {
       "queryconstants": {
         "###mycustomdate###": "2017-06-09",
-        "###yesterday###": "to_date(sysdate-2)"
+        "###yesterday###": "to_date(sysdate-2)",
+        "###tablename": "AS MONK_VALUE"
       },
       "monitoringbackendprovider_default": "",
       "monitoringbackendprovider_fallback": "csv01",
@@ -90,7 +91,7 @@
         {
           "name": "ThirdQuery",
           "measurement": "rows",
-          "statement": "SELECT COUNT(*) AS MONK_VALUE FROM monk.Names",
+          "statement": "SELECT COUNT(*) ###tablename### FROM monk.Names",
           "timestamp": "",
           "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
           "database_backend": "mysql01"
