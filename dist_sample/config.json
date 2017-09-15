@@ -70,7 +70,7 @@
         {
           "name": "FirstQuery",
           "measurement": "rows",
-          "statement": "SELECT name FROM people",
+          "statement": "SELECT name FROM people2",
           "timestamp": "",
           "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
           "database_backend": "csv01"
