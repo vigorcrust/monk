@@ -176,11 +176,20 @@ public class QueryExecutor {
 			}
 
 			if (rsmd != null) {
-				Logger.info("RESULT:");
-				while (rs.next()) {
-					count++;
+
+				if (query.getStatement().contains("MONK_VALUE")) {
+					Logger.info("Query contains 'MONK_VALUE', result of COUNT() will be used.");
+					if (rs.next()) {
+						count = rs.getDouble("MONK_VALUE");
+					}
+				} else {
+					Logger.info("Query doesn't contain 'MONK_VALUE'. Counting the rows.");
+					while (rs.next()) {
+						count++;
+					}
 				}
-				Logger.info("Row Count - " + count);
+				Logger.info("RESULT: " + count);
+
 			}
 
 			if (rs != null) {

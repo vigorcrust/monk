@@ -5,6 +5,10 @@
     "authors": "Daniel Martens, Alexander Hatzold",
     "libspath": "C:\\Users\\ahatzold\\GitProjects\\monk_project\\dist_sample\\libs",
     "configuration": {
+      "queryconstants": {
+        "###mycustomdate###": "2017-06-09",
+        "###yesterday###": "to_date(sysdate-2)"
+      },
       "monitoringbackendprovider_default": "",
       "monitoringbackendprovider_fallback": "csv01",
       "dbbackendprovider_default": "oracle01",
@@ -70,7 +74,7 @@
         {
           "name": "FirstQuery",
           "measurement": "rows",
-          "statement": "SELECT name FROM people",
+          "statement": "SELECT name FROM people2",
           "timestamp": "",
           "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
           "database_backend": "csv01"
@@ -78,7 +82,7 @@
         {
           "name": "SecondQuery",
           "measurement": "rows",
-          "statement": "select lname from system.mon_users",
+          "statement": "select count(*) as MONK_VALUE from system.mon_users",
           "timestamp": "",
           "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
           "database_backend": "oracle01"
@@ -86,7 +90,7 @@
         {
           "name": "ThirdQuery",
           "measurement": "rows",
-          "statement": "SELECT COUNT(*) FROM monk.Names",
+          "statement": "SELECT COUNT(*) AS MONK_VALUE FROM monk.Names",
           "timestamp": "",
           "extra": "db=monk$location=C:/Users/ahatzold/GitProjects/monk_project/dist_sample/output1.csv",
           "database_backend": "mysql01"

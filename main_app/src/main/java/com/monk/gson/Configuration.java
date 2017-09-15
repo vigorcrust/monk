@@ -2,6 +2,7 @@ package com.monk.gson;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -29,6 +30,9 @@ public class Configuration {
 	@SerializedName("queries")
 	private List<Query> queries;
 
+	@SerializedName("queryconstants")
+	private HashMap<String, String> queryconstants;
+
 	public String getDefaultMonitoringBackendProvider() {
 		return defaultMonitoringBackendProvider;
 	}
@@ -51,5 +55,9 @@ public class Configuration {
 
 	public List<Query> getQueries() {
 		return queries;
+	}
+
+	public HashMap<String, String> getQueryconstants() {
+		return queryconstants;
 	}
 }

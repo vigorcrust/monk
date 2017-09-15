@@ -1,0 +1,128 @@
+{
+  "application": "monk",
+  "version": "1.0",
+  "author": "Daniel Martens",
+  "simulate": true,
+  "configuration": {
+    "monitoringbackendprovider": [
+      {
+        "name": "influx01",
+        "database": "normmaster",
+        "connectionString": "http://localhost:8086",
+        "username": "dummy",
+        "password": "dummy"
+      }
+    ],
+    "databasebackendprovider": [
+      {
+        "name": "oracle01",
+        "driver": "oracle.jdbc.OracleDriver",
+        "connectionString": "jdbc:oracle:thin:@sedcbdcm0000:1540:nmaster",
+        "username": "ops$nmaster",
+        "password": "Sistemo4norm!gi"
+      }
+    ],
+    "queryconstants": {
+      "###mycustomdate###": "2017-06-09",
+      "###yesterday###": "to_date(sysdate-2)"
+    },
+    "queries": [
+      {
+        "name": "nutzer_intern_aktiv",
+        "measurement": "value",
+        "statement": "SELECT COUNT(distinct nutzernr) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll WHERE orgeinheit = 'DCAGN01' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "lieferanten_aktiv",
+        "measurement": "value",
+        "statement": "SELECT COUNT(distinct nutzernr) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll WHERE orgeinheit = 'FTPNN02' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "lieferanten_dokumentenanzeige_alle_mit_aenderungslisten",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll WHERE aktion in ('ANZEIGE KOSTENFREI', 'BEUTH-DOWNLOAD') and orgeinheit = 'FTPNN02' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "nutzer_intern_dokumentenanzeige_alle_ohne_aenderungslisten",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll WHERE aktion in ('ANZEIGE KOSTENFREI', 'BEUTH-DOWNLOAD') and orgeinheit = 'DCAGN01' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "lieferanten_dokumentenanzeige_aenderungslisten",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll where aktion = 'ANZEIGE KOSTENFREI' and (key like 'DCAGN01I%' or key like 'DCAGN01U%' or key like 'FTPNN02I%' or key like 'FTPNN02U%') and orgeinheit = 'FTPNN02' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "nutzer_intern_dokumentenanzeige_externe_dokumente",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll where aktion in ('ANZEIGE KOSTENFREI', 'BEUTH-DOWNLOAD') and key like 'DITR%' and orgeinheit = 'DCAGN01' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "nutzer_intern_dokumentenanzeige_interne_dokumente",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll where aktion in ('ANZEIGE KOSTENFREI', 'BEUTH-DOWNLOAD') and key like 'DC%' and key not like 'DCAGN01I%' and key not like 'DCAGN01U%' and orgeinheit = 'DCAGN01' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "lieferanten_dokumentenanzeige_interne_dokumente",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll where aktion = 'ANZEIGE KOSTENFREI' and key like 'DC%' and key not like 'DCAGN01I%' and key not like 'DCAGN01U%' and orgeinheit = 'FTPNN02' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "nutzer_intern_recherche",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll where aktion = 'RECHERCHE_WEB' and orgeinheit = 'DCAGN01' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "lieferanten_recherche",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM protokoll where aktion = 'RECHERCHE_WEB' and orgeinheit = 'FTPNN02' AND datum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "nutzer_intern_registrierung",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM nutzer where orgeinheit = 'DCAGN01' AND edatum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      },
+      {
+        "name": "lieferanten_registrierung",
+        "measurement": "value",
+        "statement": "SELECT COUNT(*) AS MONK_VALUE, ((###yesterday### - to_date('01-JAN-1970','DD-MON-YYYY')) * (86400)) AS MONK_TIMESTAMP FROM nutzer where orgeinheit = 'FTPNN02' AND edatum = to_char(###yesterday###, 'YYYY-MM-DD')",
+        "extra": "source=monk",
+        "monitoringbackendprovider": "influx01",
+        "databasebackendprovider": "oracle01"
+      }
+    ]
+  }
+}
