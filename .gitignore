@@ -27,3 +27,4 @@ hs_err_pid*
 /dist_sample/head.bat
 /dist_sample/*.txt
 /main_app/src/main/resources/config_example.json
+/miscellaneous
