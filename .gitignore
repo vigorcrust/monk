@@ -28,3 +28,10 @@ hs_err_pid*
 /dist_sample/*.txt
 /main_app/src/main/resources/config_example.json
 /miscellaneous
+/.idea
+/dist_sample/standalone
+/dist_sample/people2.csv
+/dist_sample/config_example.json
+/dist_sample/config_new.json
+/dist_sample/output1.csv
+/dist_sample/people.csv
